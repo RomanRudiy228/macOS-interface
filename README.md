@@ -18,7 +18,7 @@ A modern web application built with Next.js, TypeScript, Tailwind CSS, shadcn/ui
 ### TypeScript
 
 - Strict type checking enabled
-- Path aliases configured (`@/*` → `./*`)
+- Path aliases: `@/*` → `./src/*`, `@/supabase/*` → `./supabase/*`
 - Next.js TypeScript plugin integrated
 - Type declarations for Node.js and Next.js
 
@@ -45,12 +45,12 @@ A modern web application built with Next.js, TypeScript, Tailwind CSS, shadcn/ui
 
 ### Supabase
 
-- **Client** (`utils/supabase/client.ts`) — for Client Components (browser).
-- **Server** (`utils/supabase/server.ts`) — for Server Components and Route Handlers (cookies).
-- **Middleware helper** (`utils/supabase/middleware.ts`) — for Next.js proxy (session refresh).
-- **Types** (`utils/supabase/types/database.types.ts`) — generated DB types for type-safe queries.
+- **Client** (`supabase/client.ts`) — for Client Components (browser).
+- **Server** (`supabase/server.ts`) — for Server Components and Route Handlers (cookies).
+- **Middleware helper** (`supabase/middleware.ts`) — for Next.js proxy (session refresh).
+- **Types** (`supabase/types/database.types.ts`) — generated DB types for type-safe queries.
 
-Session refresh runs in `proxy.ts` (Next.js 16 proxy) so Server Components see an up-to-date session.
+Session refresh runs in `src/proxy.ts` (Next.js 16 proxy) so Server Components see an up-to-date session.
 
 ## Environment Variables
 
@@ -115,24 +115,23 @@ npx shadcn@latest add dialog
 ## Project Structure
 
 ```
-├── app/                        # App Router (Next.js 13+)
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx                # Home page
-│   └── globals.css             # Global styles with Tailwind
-├── components/                 # React components
-│   └── ui/                     # shadcn/ui components
-├── lib/                        # Utilities and helpers
-│   └── utils.ts                # Utility functions (cn helper)
-├── utils/
-│   └── supabase/               # Supabase clients and types
-│       ├── client.ts           # Browser client (Client Components)
-│       ├── server.ts           # Server client (Server Components, Route Handlers)
-│       ├── middleware.ts       # Client for proxy (session refresh)
-│       └── types/
-│           └── database.types.ts  # Generated DB types (run yarn db:types)
-├── proxy.ts                    # Next.js 16 proxy (session refresh)
-├── hooks/                      # Custom React hooks
-├── public/                     # Static assets
+├── src/
+│   ├── app/                    # App Router (Next.js 13+)
+│   │   ├── layout.tsx         # Root layout
+│   │   ├── page.tsx           # Home page
+│   │   └── globals.css        # Global styles with Tailwind
+│   ├── proxy.ts                # Next.js 16 proxy (session refresh)
+│   └── shared/
+│       ├── components/
+│       │   └── ui/             # shadcn/ui components
+│       └── lib/
+│           └── utils.ts        # Utility functions (cn helper)
+├── supabase/                   # Supabase clients and types
+│   ├── client.ts               # Browser client (Client Components)
+│   ├── server.ts               # Server client (Server Components, Route Handlers)
+│   ├── middleware.ts           # Client for proxy (session refresh)
+│   └── types/
+│       └── database.types.ts   # Generated DB types (run yarn db:types)
 ├── .env                        # Environment variables (not committed)
 ├── eslint.config.js            # ESLint flat config (ESLint 9+)
 ├── .prettierrc.json            # Prettier configuration
@@ -166,10 +165,10 @@ yarn db:types:local
 **Manual** (replace `<project-ref>` with your project ID from the dashboard URL):
 
 ```bash
-npx supabase gen types typescript --project-id <project-ref> --schema public > utils/supabase/types/database.types.ts
+npx supabase gen types typescript --project-id <project-ref> --schema public > supabase/types/database.types.ts
 ```
 
-After generation, `createClient()` from `utils/supabase/server` and `utils/supabase/client` will infer table types from `Database`.
+After generation, `createClient()` from `supabase/server` and `supabase/client` will infer table types from `Database`.
 
 ## Configuration Files
 
