@@ -2,6 +2,8 @@
 
 A modern web application built with Next.js, TypeScript, Tailwind CSS, shadcn/ui, and Supabase.
 
+**Live:** [macos-interface.vercel.app](https://macos-interface.vercel.app) (deployed on Vercel)
+
 ## Tech Stack
 
 - **Next.js 16** - React framework with App Router and proxy (ex-middleware)
