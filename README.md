@@ -1,13 +1,14 @@
 # macOS Interface
 
-A modern web application built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui.
+A modern web application built with Next.js, TypeScript, Tailwind CSS, shadcn/ui, and Supabase.
 
 ## Tech Stack
 
-- **Next.js 16** - React framework with App Router
+- **Next.js 16** - React framework with App Router and proxy (ex-middleware)
 - **TypeScript** - Type safety and better developer experience
 - **Tailwind CSS** - Utility-first CSS framework
-- **shadcn/ui** - Beautiful UI components built with Radix UI and Tailwind CSS
+- **shadcn/ui** - UI components built with Radix UI and Tailwind CSS
+- **Supabase** - Backend (Auth, Database). Typed client via `@supabase/ssr` and `@supabase/supabase-js`
 - **ESLint** - Code linting and quality checks
 - **Prettier** - Code formatting
 - **Yarn** - Package manager
@@ -42,6 +43,32 @@ A modern web application built with Next.js, TypeScript, Tailwind CSS, and shadc
 - TypeScript for type checking
 - Pre-commit hooks ready (can be added with husky)
 
+### Supabase
+
+- **Client** (`utils/supabase/client.ts`) — for Client Components (browser).
+- **Server** (`utils/supabase/server.ts`) — for Server Components and Route Handlers (cookies).
+- **Middleware helper** (`utils/supabase/middleware.ts`) — for Next.js proxy (session refresh).
+- **Types** (`utils/supabase/types/database.types.ts`) — generated DB types for type-safe queries.
+
+Session refresh runs in `proxy.ts` (Next.js 16 proxy) so Server Components see an up-to-date session.
+
+## Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+```
+
+Get these from [Supabase Dashboard](https://supabase.com/dashboard) → your project → **Settings** → **API**.
+
+Optional (for generating types):
+
+```env
+SUPABASE_PROJECT_REF=<project-ref>
+```
+
 ## Installation
 
 ```bash
@@ -68,6 +95,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `yarn format` - Format code with Prettier
 - `yarn format:check` - Check code formatting without fixing
 - `yarn typecheck` - Run TypeScript type checking
+- `yarn db:types` - Generate Supabase DB types (requires `SUPABASE_PROJECT_REF` in env)
+- `yarn db:types:local` - Generate types from local Supabase (requires `supabase start`)
 
 ## Adding shadcn/ui Components
 
@@ -86,33 +115,66 @@ npx shadcn@latest add dialog
 ## Project Structure
 
 ```
-├── app/                  # App Router (Next.js 13+)
-│   ├── layout.tsx        # Root layout
-│   ├── page.tsx          # Home page
-│   └── globals.css       # Global styles with Tailwind
-├── components/            # React components
-│   └── ui/              # shadcn/ui components
-├── lib/                  # Utilities and helpers
-│   └── utils.ts         # Utility functions (cn helper)
-├── hooks/                # Custom React hooks
-├── public/               # Static assets
-├── .eslintrc.json        # ESLint configuration (legacy, for reference)
-├── eslint.config.js      # ESLint flat config (ESLint 9+)
-├── .prettierrc.json      # Prettier configuration
-├── .prettierignore       # Prettier ignore patterns
-├── tsconfig.json         # TypeScript configuration
-├── next.config.ts        # Next.js configuration
-├── tailwind.config.ts    # Tailwind CSS configuration
-├── postcss.config.js     # PostCSS configuration
-├── components.json       # shadcn/ui configuration
-├── .yarnrc.yml           # Yarn configuration (node-modules linker)
-└── .vscode/              # VS Code settings
-    └── settings.json     # Editor settings (format on save, etc.)
+├── app/                        # App Router (Next.js 13+)
+│   ├── layout.tsx             # Root layout
+│   ├── page.tsx                # Home page
+│   └── globals.css             # Global styles with Tailwind
+├── components/                 # React components
+│   └── ui/                     # shadcn/ui components
+├── lib/                        # Utilities and helpers
+│   └── utils.ts                # Utility functions (cn helper)
+├── utils/
+│   └── supabase/               # Supabase clients and types
+│       ├── client.ts           # Browser client (Client Components)
+│       ├── server.ts           # Server client (Server Components, Route Handlers)
+│       ├── middleware.ts       # Client for proxy (session refresh)
+│       └── types/
+│           └── database.types.ts  # Generated DB types (run yarn db:types)
+├── proxy.ts                    # Next.js 16 proxy (session refresh)
+├── hooks/                      # Custom React hooks
+├── public/                     # Static assets
+├── .env                        # Environment variables (not committed)
+├── eslint.config.js            # ESLint flat config (ESLint 9+)
+├── .prettierrc.json            # Prettier configuration
+├── .prettierignore             # Prettier ignore patterns
+├── tsconfig.json               # TypeScript configuration
+├── next.config.ts              # Next.js configuration
+├── tailwind.config.ts          # Tailwind CSS configuration
+├── postcss.config.js           # PostCSS configuration
+├── components.json             # shadcn/ui configuration
+├── .yarnrc.yml                 # Yarn configuration (node-modules linker)
+└── .vscode/                    # VS Code settings
+    └── settings.json           # Editor settings (format on save, etc.)
 ```
+
+## Generating Supabase Types
+
+To get type-safe Supabase queries, generate types from your project schema:
+
+**Remote project** (set `SUPABASE_PROJECT_REF` in `.env` or export it):
+
+```bash
+yarn db:types
+```
+
+**Local project** (with `supabase start`):
+
+```bash
+yarn db:types:local
+```
+
+**Manual** (replace `<project-ref>` with your project ID from the dashboard URL):
+
+```bash
+npx supabase gen types typescript --project-id <project-ref> --schema public > utils/supabase/types/database.types.ts
+```
+
+After generation, `createClient()` from `utils/supabase/server` and `utils/supabase/client` will infer table types from `Database`.
 
 ## Configuration Files
 
 - **`tsconfig.json`** - TypeScript compiler options with strict mode
+- **`next.config.ts`** - Next.js config (includes `serverExternalPackages` for Supabase)
 - **`eslint.config.js`** - ESLint flat config with Next.js and Prettier integration
 - **`.prettierrc.json`** - Code formatting rules
 - **`tailwind.config.ts`** - Tailwind CSS with shadcn/ui theme variables
