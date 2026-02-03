@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DockMenu } from "@/components/dock-menu/dock-menu";
 
 export const metadata: Metadata = {
   title: "macOS Interface",
   description: "macOS Interface built with Next.js",
+  icons: {
+    icon: "/favicon/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -13,7 +17,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body>{children}</body>
+      <body className="min-h-screen">
+        {children}
+        <DockMenu />
+      </body>
     </html>
   );
 }

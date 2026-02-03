@@ -1,11 +1,4 @@
-import { createClient } from "@/supabase/server";
-import { cookies } from "next/headers";
-
 export default async function Page() {
-  const cookieStore = await cookies();
-  const supabase = createClient(cookieStore);
-
-  const { data: todos } = await supabase.from("todos").select();
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
