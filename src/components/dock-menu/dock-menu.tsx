@@ -2,6 +2,11 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/shared/components/ui/tooltip";
 import { ICON_SIZE, SLOT_HEIGHT } from "./const/dock-menu.const";
 import { getScale } from "./utils/get-scale";
 import type { DockMenuProps } from "./types/dock-menu.types";
@@ -23,28 +28,33 @@ export function DockMenu({ items }: DockMenuProps) {
           return (
             <li
               key={item.id}
-              className="flex flex-col cursor-pointer items-center justify-end transition-all duration-200 ease-out origin-bottom"
+              className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
               style={{ minWidth: size, height: SLOT_HEIGHT }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <span
-                className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
-                style={{
-                  width: ICON_SIZE,
-                  height: ICON_SIZE,
-                  transform: `scale(${scale})`,
-                }}
-              >
-                <Image
-                  src={item.src}
-                  alt={item.name}
-                  fill
-                  className="object-contain drop-shadow-lg"
-                  sizes={`${size}px`}
-                  unoptimized={item.src.endsWith(".png")}
-                />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
+                    style={{
+                      width: ICON_SIZE,
+                      height: ICON_SIZE,
+                      transform: `scale(${scale})`,
+                    }}
+                  >
+                    <Image
+                      src={item.src}
+                      alt={item.name}
+                      fill
+                      className="object-contain drop-shadow-lg"
+                      sizes={`${size}px`}
+                      unoptimized={item.src.endsWith(".png")}
+                    />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top">{item.name}</TooltipContent>
+              </Tooltip>
             </li>
           );
         })}
@@ -57,28 +67,33 @@ export function DockMenu({ items }: DockMenuProps) {
           const size = Math.ceil(ICON_SIZE * scale);
           return (
             <li
-              className="flex flex-col cursor-pointer items-center justify-end transition-all duration-200 ease-out origin-bottom"
+              className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
               style={{ minWidth: size, height: SLOT_HEIGHT }}
               onMouseEnter={() => setHoveredIndex(trashIndex)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <span
-                className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
-                style={{
-                  width: ICON_SIZE,
-                  height: ICON_SIZE,
-                  transform: `scale(${scale})`,
-                }}
-              >
-                <Image
-                  src={trashItem.src}
-                  alt={trashItem.name}
-                  fill
-                  className="object-contain drop-shadow-lg opacity-80"
-                  sizes={`${size}px`}
-                  unoptimized
-                />
-              </span>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
+                    style={{
+                      width: ICON_SIZE,
+                      height: ICON_SIZE,
+                      transform: `scale(${scale})`,
+                    }}
+                  >
+                    <Image
+                      src={trashItem.src}
+                      alt={trashItem.name}
+                      fill
+                      className="object-contain drop-shadow-lg opacity-80"
+                      sizes={`${size}px`}
+                      unoptimized
+                    />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top">{trashItem.name}</TooltipContent>
+              </Tooltip>
             </li>
           );
         })()}

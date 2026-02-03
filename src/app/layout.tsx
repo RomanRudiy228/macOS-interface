@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { DockMenuWrapper } from "@/components/dock-menu/dock-menu-wrapper";
+import { TooltipProvider } from "@/shared/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "macOS Interface",
@@ -18,8 +19,10 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className="min-h-screen">
-        {children}
-        <DockMenuWrapper />
+        <TooltipProvider delayDuration={100}>
+          {children}
+          <DockMenuWrapper />
+        </TooltipProvider>
       </body>
     </html>
   );
