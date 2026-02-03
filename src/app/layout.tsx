@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { DockMenu } from "@/components/dock-menu/dock-menu";
+import { DockMenuWrapper } from "@/components/dock-menu/dock-menu-wrapper";
 
 export const metadata: Metadata = {
   title: "macOS Interface",
@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="uk">
       <body className="min-h-screen">
         {children}
-        <DockMenu />
+        <DockMenuWrapper />
       </body>
     </html>
   );

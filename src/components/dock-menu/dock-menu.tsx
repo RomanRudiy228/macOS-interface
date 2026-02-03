@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { DOCK_ITEMS } from "./const/dock-menu.const";
 import { ICON_SIZE, SLOT_HEIGHT } from "./const/dock-menu.const";
 import { getScale } from "./utils/get-scale";
+import type { DockMenuProps } from "./types/dock-menu.types";
 
-export function DockMenu() {
+export function DockMenu({ items }: DockMenuProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const mainItems = DOCK_ITEMS.slice(0, -1);
-  const trashItem = DOCK_ITEMS[DOCK_ITEMS.length - 1];
+  const mainItems = items.slice(0, -1);
+  const trashItem = items[items.length - 1];
 
   return (
     <nav
@@ -52,7 +52,7 @@ export function DockMenu() {
       <div className="w-px self-center h-10 bg-white/20 shrink-0" aria-hidden />
       <ul className="flex items-end gap-0.5">
         {(() => {
-          const trashIndex = DOCK_ITEMS.length - 1;
+          const trashIndex = items.length - 1;
           const scale = getScale(hoveredIndex, trashIndex);
           const size = Math.ceil(ICON_SIZE * scale);
           return (
