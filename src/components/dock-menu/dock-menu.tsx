@@ -28,10 +28,13 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
   const { items, mainItems, binItem, handleDragEnd } =
     useDockItems(initialItems);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [loadedCount, setLoadedCount] = useState(items.length);
   const allImagesLoaded = loadedCount >= items.length;
   const handleImageLoad = () =>
     setLoadedCount((c) => Math.min(c + 1, items.length));
+
+  const effectiveHoveredIndex = isDragging ? null : hoveredIndex;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -49,7 +52,11 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
       <DndContext
         sensors={sensors}
         collisionDetection={pointerWithin}
-        onDragEnd={handleDragEnd}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={(event) => {
+          handleDragEnd(event);
+          setIsDragging(false);
+        }}
       >
         <ul className="flex items-end gap-0.5">
           <SortableContext
@@ -61,7 +68,7 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
                 key={item.id}
                 item={item}
                 index={index}
-                hoveredIndex={hoveredIndex}
+                hoveredIndex={effectiveHoveredIndex}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
                 onImageLoad={handleImageLoad}
@@ -78,7 +85,7 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
         <ul className="flex items-end gap-0.5">
           {(() => {
             const binIndex = items.length - 1;
-            const scale = getScale(hoveredIndex, binIndex);
+            const scale = getScale(effectiveHoveredIndex, binIndex);
             const size = Math.ceil(ICON_SIZE * scale);
             return (
               <li
