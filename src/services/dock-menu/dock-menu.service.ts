@@ -3,7 +3,7 @@ import { createClient } from "@/supabase/server";
 import {
   APP_CATALOG,
   DEFAULT_DOCK_ORDER,
-} from "@/components/dock-menu/const/dock-menu.const";
+} from "@/shared/const/dock-menu.const";
 import type { DockItemView } from "./types/dock-menu.types";
 
 export function canRemoveFromDock(item: DockItemView): boolean {

@@ -1,4 +1,4 @@
-import { SCALES } from "../const/dock-menu.const";
+import { SCALES } from "@/shared/const/dock-menu.const";
 
 export function getScale(hoveredIndex: number | null, index: number): number {
   if (hoveredIndex === null) return 1;

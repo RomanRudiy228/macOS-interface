@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { DockMenuWrapper } from "@/components/dock-menu/dock-menu-wrapper";
+import { DockMenuWrapper } from "@/components/dock-menu/components/dock-menu-wrapper/dock-menu-wrapper";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 
 export const metadata: Metadata = {
