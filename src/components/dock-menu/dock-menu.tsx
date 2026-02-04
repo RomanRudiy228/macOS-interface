@@ -14,7 +14,7 @@ import type { DockMenuProps } from "./types/dock-menu.types";
 export function DockMenu({ items }: DockMenuProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const mainItems = items.slice(0, -1);
-  const trashItem = items[items.length - 1];
+  const binItem = items[items.length - 1];
 
   return (
     <nav
@@ -62,14 +62,14 @@ export function DockMenu({ items }: DockMenuProps) {
       <div className="w-px self-center h-10 bg-white/20 shrink-0" aria-hidden />
       <ul className="flex items-end gap-0.5">
         {(() => {
-          const trashIndex = items.length - 1;
-          const scale = getScale(hoveredIndex, trashIndex);
+          const binIndex = items.length - 1;
+          const scale = getScale(hoveredIndex, binIndex);
           const size = Math.ceil(ICON_SIZE * scale);
           return (
             <li
               className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
               style={{ minWidth: size, height: SLOT_HEIGHT }}
-              onMouseEnter={() => setHoveredIndex(trashIndex)}
+              onMouseEnter={() => setHoveredIndex(binIndex)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
               <Tooltip>
@@ -83,8 +83,8 @@ export function DockMenu({ items }: DockMenuProps) {
                     }}
                   >
                     <Image
-                      src={trashItem.src}
-                      alt={trashItem.name}
+                      src={binItem.src}
+                      alt={binItem.name}
                       fill
                       className="object-contain drop-shadow-lg opacity-80"
                       sizes={`${size}px`}
@@ -92,7 +92,7 @@ export function DockMenu({ items }: DockMenuProps) {
                     />
                   </span>
                 </TooltipTrigger>
-                <TooltipContent side="top">{trashItem.name}</TooltipContent>
+                <TooltipContent side="top">{binItem.name}</TooltipContent>
               </Tooltip>
             </li>
           );

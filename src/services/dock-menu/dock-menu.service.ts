@@ -6,13 +6,17 @@ import {
 } from "@/components/dock-menu/const/dock-menu.const";
 import type { DockItemView } from "./types/dock-menu.types";
 
+export function canRemoveFromDock(item: DockItemView): boolean {
+  return !item.is_locked;
+}
+
 export async function getDockItems(): Promise<DockItemView[]> {
   try {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
     const { data, error } = await supabase
       .from("dock_items")
-      .select("id, app_key, position")
+      .select("id, app_key, position, is_locked")
       .order("position", { ascending: true });
 
     if (error || !data?.length) {
@@ -27,6 +31,7 @@ export async function getDockItems(): Promise<DockItemView[]> {
         id: row.id,
         name: app.name,
         src: app.src,
+        is_locked: row.is_locked ?? false,
       });
     }
 
@@ -43,6 +48,7 @@ function getFallbackDockItems(): DockItemView[] {
       id: `fallback-${index}-${appKey}`,
       name: app.name,
       src: app.src,
+      is_locked: false,
     };
   });
 }

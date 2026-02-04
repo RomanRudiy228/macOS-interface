@@ -13,18 +13,21 @@ export type Database = {
         Row: {
           app_key: string;
           id: string;
+          is_locked: boolean;
           position: number;
           user_id: string | null;
         };
         Insert: {
           app_key: string;
           id?: string;
+          is_locked?: boolean;
           position: number;
           user_id?: string | null;
         };
         Update: {
           app_key?: string;
           id?: string;
+          is_locked?: boolean;
           position?: number;
           user_id?: string | null;
         };

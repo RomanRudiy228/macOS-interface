@@ -12,8 +12,8 @@ export const APP_CATALOG: Record<string, { name: string; src: string }> = {
   siri: { name: "Siri", src: "/images/siri.webp" },
   terminal: { name: "Terminal", src: "/images/terminal.webp" },
   "voice-memos": { name: "Voice Memos", src: "/images/voice-memos.webp" },
-  weather: { name: "Weather", src: "/images/weather.webp" },
-  trash: { name: "Trash", src: "/images/trash.png" },
+  launchpad: { name: "Launchpad", src: "/images/launchpad.png" },
+  bin: { name: "Bin", src: "/images/bin.png" },
 };
 
 export const DEFAULT_DOCK_ORDER = [
@@ -30,8 +30,8 @@ export const DEFAULT_DOCK_ORDER = [
   "siri",
   "terminal",
   "voice-memos",
-  "weather",
-  "trash",
+  "launchpad",
+  "bin",
 ] as const;
 
 export const ICON_SIZE = 70;
