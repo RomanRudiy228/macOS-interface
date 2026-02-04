@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import {
   DndContext,
-  closestCenter,
+  pointerWithin,
   PointerSensor,
   useSensor,
   useSensors,
@@ -48,7 +48,7 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
     >
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={pointerWithin}
         onDragEnd={handleDragEnd}
       >
         <ul className="flex items-end gap-0.5">

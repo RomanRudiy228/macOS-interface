@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { reorderDockItems } from "@/actions/dock-menu-reorder";
+import { removeFromDock } from "@/actions/dock-menu-remove";
 import type { DockItemView } from "@/services/dock-menu/types/dock-menu.types";
 
 export function useDockItems(initialItems: DockItemView[]) {
@@ -14,7 +15,19 @@ export function useDockItems(initialItems: DockItemView[]) {
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
+
+    if (!over) {
+      const item = mainItems.find((i) => i.id === active.id);
+      if (!item || item.is_locked) return;
+      const newMain = mainItems.filter((i) => i.id !== active.id);
+      setItems([...newMain, binItem]);
+      if (!item.id.startsWith("fallback-")) {
+        await removeFromDock(item.id);
+      }
+      return;
+    }
+
+    if (active.id === over.id) return;
 
     const oldIndex = mainItems.findIndex((i) => i.id === active.id);
     const newIndex = mainItems.findIndex((i) => i.id === over.id);

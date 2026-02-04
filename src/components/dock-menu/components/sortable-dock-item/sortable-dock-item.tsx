@@ -46,7 +46,7 @@ export function SortableDockItem({
     <li
       ref={setNodeRef}
       style={style}
-      className="flex flex-col cursor-grab active:cursor-grabbing items-center justify-end transition-all duration-200 ease-out origin-bottom"
+      className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       {...attributes}
