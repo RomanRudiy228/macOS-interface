@@ -4,6 +4,8 @@
 
 @layer base {
   :root {
+    --system-accent: 214 92% 56%;
+    --system-accent-foreground: 0 0% 100%;
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
@@ -16,13 +18,13 @@
     --secondary-foreground: 0 0% 9%;
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --accent: var(--system-accent);
+    --accent-foreground: var(--system-accent-foreground);
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --ring: var(--system-accent);
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
@@ -32,6 +34,8 @@
   }
 
   .dark {
+    --system-accent: 214 92% 56%;
+    --system-accent-foreground: 0 0% 100%;
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
@@ -44,13 +48,13 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: var(--system-accent);
+    --accent-foreground: var(--system-accent-foreground);
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --ring: var(--system-accent);
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -64,6 +68,115 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground overflow-hidden;
+  }
+}
+
+.desktop-shell {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(
+      circle at 18% 22%,
+      rgba(255, 255, 255, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(255, 255, 255, 0.12),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 75%,
+      rgba(255, 255, 255, 0.1),
+      transparent 55%
+    ),
+    linear-gradient(160deg, rgba(8, 12, 26, 0.9) 0%, rgba(7, 12, 22, 0.95) 100%);
+}
+
+.desktop-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0) 55%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.desktop-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+  opacity: 0.18;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.glass-surface {
+  background: linear-gradient(
+    180deg,
+    rgba(20, 24, 37, 0.7) 0%,
+    rgba(10, 12, 22, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 30px 90px rgba(2, 6, 23, 0.55);
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
+}
+
+.traffic-lights {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.traffic-light {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.traffic-light.red {
+  background: #ff5f57;
+}
+
+.traffic-light.yellow {
+  background: #febc2e;
+}
+
+.traffic-light.green {
+  background: #28c840;
+}
+
+.macos-spinner {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.macos-spinner span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 12px;
+  margin: -6px 0 0 -2px;
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  animation: macos-spinner-fade 1.2s linear infinite;
+}
+
+@keyframes macos-spinner-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.15;
   }
 }
