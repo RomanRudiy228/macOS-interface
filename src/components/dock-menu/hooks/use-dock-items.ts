@@ -3,9 +3,8 @@
 import { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { reorderDockItems } from "@/actions/dock-menu-reorder";
-import { removeFromDock } from "@/actions/dock-menu-remove";
-import type { DockItemView } from "@/services/dock-menu/types/dock-menu.types";
+import { reorderDockItems, removeFromDock } from "@actions";
+import type { DockItemView } from "@services/dock-menu";
 
 export function useDockItems(initialItems: DockItemView[]) {
   const [items, setItems] = useState<DockItemView[]>(initialItems);

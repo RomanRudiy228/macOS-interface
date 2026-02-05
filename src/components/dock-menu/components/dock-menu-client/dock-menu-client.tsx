@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { createContext, useContext } from "react";
-import { DockMenuPlaceholder } from "@/components/dock-menu/components/dock-menu-placeholder/dock-menu-placeholder";
-import type { DockItemView } from "@/services/dock-menu/types/dock-menu.types";
+import { DockMenuPlaceholder } from "@components/dock-menu/components/dock-menu-placeholder";
+import type { DockItemView } from "@services/dock-menu";
 
 const DockItemsContext = createContext<DockItemView[] | null>(null);
 
@@ -14,7 +14,10 @@ function DockMenuLoading() {
 }
 
 const DockMenuDynamic = dynamic(
-  () => import("../../dock-menu").then((m) => ({ default: m.DockMenu })),
+  () =>
+    import("@components/dock-menu/dock-menu").then((m) => ({
+      default: m.DockMenu,
+    })),
   { ssr: false, loading: DockMenuLoading }
 );
 

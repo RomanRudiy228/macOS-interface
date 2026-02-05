@@ -1,10 +1,7 @@
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import {
-  APP_CATALOG,
-  DEFAULT_DOCK_ORDER,
-} from "@/shared/const/dock-menu.const";
-import type { DockItemView } from "./types/dock-menu.types";
+import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@const";
+import type { DockItemView } from "./types";
 
 export function canRemoveFromDock(item: DockItemView): boolean {
   return !item.is_locked;

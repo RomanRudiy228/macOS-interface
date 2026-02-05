@@ -1,16 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/shared/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@shared";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { ICON_SIZE, SLOT_HEIGHT } from "@/shared/const/dock-menu.const";
-import { getScale } from "@/components/dock-menu/utils/get-scale";
-import type { SortableDockItemProps } from "./types/sortable-dock-menu.types";
+import { ICON_SIZE, SLOT_HEIGHT } from "@const";
+import { getScale } from "@utils";
+import type { SortableDockItemProps } from "./types";
 
 export function SortableDockItem({
   item,

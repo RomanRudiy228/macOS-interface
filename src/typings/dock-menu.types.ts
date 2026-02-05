@@ -1,5 +1,5 @@
 import type { DockItemView } from "@services/dock-menu";
 
-export type DockMenuPlaceholderProps = {
+export type DockMenuProps = {
   items: DockItemView[];
 };

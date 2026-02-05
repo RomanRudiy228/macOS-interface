@@ -13,16 +13,12 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/shared/components/ui/tooltip";
-import { ICON_SIZE, SLOT_HEIGHT } from "@/shared/const/dock-menu.const";
-import { getScale } from "./utils/get-scale";
-import { SortableDockItem } from "./components/sortable-dock-item/sortable-dock-item";
-import { useDockItems } from "./hooks/use-dock-items";
-import type { DockMenuProps } from "./types/dock-menu.types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@shared";
+import { ICON_SIZE, SLOT_HEIGHT } from "@const";
+import { getScale } from "@utils";
+import { SortableDockItem } from "@components/dock-menu/dock-item";
+import { useDockItems } from "@components/dock-menu/hooks";
+import type { DockMenuProps } from "@typings";
 
 export function DockMenu({ items: initialItems }: DockMenuProps) {
   const { items, mainItems, binItem, handleDragEnd } =

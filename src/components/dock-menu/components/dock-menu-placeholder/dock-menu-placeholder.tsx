@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { ICON_SIZE, SLOT_HEIGHT } from "@/shared/const/dock-menu.const";
-import { getScale } from "@/components/dock-menu/utils/get-scale";
-import type { DockMenuPlaceholderProps } from "./types/dock-menu-placeholder.types";
+import { ICON_SIZE, SLOT_HEIGHT } from "@const";
+import { getScale } from "@utils";
+import type { DockMenuPlaceholderProps } from "./types";
 
 export function DockMenuPlaceholder({ items }: DockMenuPlaceholderProps) {
   const mainItems = items.slice(0, -1);

@@ -21,7 +21,21 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/supabase/*": ["./supabase/*"]
+      "@/supabase/*": ["./supabase/*"],
+      "@components": ["./src/components"],
+      "@components/*": ["./src/components/*"],
+      "@actions": ["./src/actions"],
+      "@actions/*": ["./src/actions/*"],
+      "@services": ["./src/services"],
+      "@services/*": ["./src/services/*"],
+      "@const": ["./src/const"],
+      "@const/*": ["./src/const/*"],
+      "@typings": ["./src/typings"],
+      "@typings/*": ["./src/typings/*"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@shared": ["./src/shared"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
   "include": [

@@ -1,6 +1,6 @@
 "use server";
 
-import { reorderDockItems as reorderDockItemsService } from "@/services/dock-menu/dock-menu-reorder.service";
+import { reorderDockItemsService } from "@services/dock-menu";
 
 export async function reorderDockItems(orderedMainIds: string[]) {
   return reorderDockItemsService(orderedMainIds);
