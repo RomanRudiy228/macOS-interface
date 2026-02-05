@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
-import { DockMenuWrapper } from "@components/dock-menu";
+import { DockMenuWrapper, DockMenuSkeleton } from "@components/dock-menu";
 import { TooltipProvider } from "@shared";
 
 export const metadata: Metadata = {
@@ -18,7 +19,9 @@ export default function RootLayout({
       <body className="min-h-screen">
         <TooltipProvider delayDuration={100}>
           {children}
-          <DockMenuWrapper />
+          <Suspense fallback={<DockMenuSkeleton />}>
+            <DockMenuWrapper />
+          </Suspense>
         </TooltipProvider>
       </body>
     </html>

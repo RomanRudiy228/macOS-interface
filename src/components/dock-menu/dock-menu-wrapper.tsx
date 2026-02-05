@@ -1,5 +1,5 @@
 import { getDockItems } from "@services/dock-menu";
-import { DockMenuClient } from "@components/dock-menu/components/dock-menu-client";
+import { DockMenuClient } from "@components/dock-menu";
 
 export async function DockMenuWrapper() {
   const items = await getDockItems();

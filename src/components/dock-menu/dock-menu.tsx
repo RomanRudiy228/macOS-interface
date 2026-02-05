@@ -25,7 +25,7 @@ export function DockMenu({ items: initialItems }: DockMenuProps) {
     useDockItems(initialItems);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [loadedCount, setLoadedCount] = useState(items.length);
+  const [loadedCount, setLoadedCount] = useState(0);
   const allImagesLoaded = loadedCount >= items.length;
   const handleImageLoad = () =>
     setLoadedCount((c) => Math.min(c + 1, items.length));
