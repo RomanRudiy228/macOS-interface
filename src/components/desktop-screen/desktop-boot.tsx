@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ScreenLoader } from "@/shared/components/ui/screen-loader";
+import { ScreenLoader } from "@/components/desktop-screen/screen-loader";
 import {
   defaultWallpaperId,
   wallpapers,
 } from "@/shared/data/wallpapers";
-import { DesktopScreen } from "@/shared/components/ui/desktop-screen";
+import { DesktopScreen } from "@/components/desktop-screen/desktop-screen";
 
 type ThemeMode = "light" | "dark";
 
@@ -37,7 +37,6 @@ const normalizeSettings = (settings?: Partial<DesktopSettings>) => ({
 export function DesktopBoot() {
   const [settings, setSettings] = useState<DesktopSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -82,19 +81,9 @@ export function DesktopBoot() {
     return <ScreenLoader label="Initializing" />;
   }
 
-  const handleWallpaperSelect = (nextId: string) => {
-    setSettings((current) => {
-      if (!current) return { ...defaultSettings, wallpaperId: nextId };
-      return { ...current, wallpaperId: nextId };
-    });
-  };
-
   return (
     <DesktopScreen
       wallpaperId={wallpaperId}
-      onWallpaperSelect={handleWallpaperSelect}
-      isPickerOpen={isPickerOpen}
-      onTogglePicker={() => setIsPickerOpen((open) => !open)}
     />
   );
 }

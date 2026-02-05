@@ -1,4 +1,4 @@
-import { ScreenLoader } from "@/shared/components/ui/screen-loader";
+import { ScreenLoader } from "@/components/desktop-screen/screen-loader";
 
 export default function Loading() {
   return <ScreenLoader />;
