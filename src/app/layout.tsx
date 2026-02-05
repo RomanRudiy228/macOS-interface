@@ -13,7 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body>{children}</body>
+      <body className="min-h-screen">
+        <div className="relative z-10 min-h-screen">{children}</div>
+      </body>
     </html>
   );
 }
