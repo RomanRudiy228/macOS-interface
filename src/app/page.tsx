@@ -1,7 +1,7 @@
 import { createClient } from "@/supabase/server";
 import { cookies } from "next/headers";
 
-import { Menubar } from "@/components/Menubar";
+import { Menubar } from "@/components/menu-bar/menu-bar";
 
 export default async function Page() {
   const cookieStore = await cookies();
