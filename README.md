@@ -150,27 +150,25 @@ npx shadcn@latest add dialog
 
 ## Generating Supabase Types
 
-To get type-safe Supabase queries, generate types from your project schema:
+To get type-safe Supabase queries, generate types from your project schema.
 
-**Remote project** (set `SUPABASE_PROJECT_REF` in `.env` or export it):
+**Recommended** — via Database URI (Session mode from Dashboard → Connect). Replace `[YOUR-PASSWORD]` with your database password; the URI is in Dashboard → **Connect** → Session mode.
 
-```bash
-yarn db:types
+**PowerShell** (from project root):
+
+```powershell
+npx supabase gen types typescript --db-url "postgresql://postgres.<PROJECT_REF>:[YOUR-PASSWORD]@aws-1-eu-north-1.pooler.supabase.com:5432/postgres" --schema public | Out-File -FilePath "supabase/types/database.types.ts" -Encoding utf8
 ```
+
+Use the exact URI from your project (host/region may differ). On Unix you can set `SUPABASE_DB_URL` in `.env` (or export it) and run `yarn db:types`; the script writes to `supabase/types/database.types.ts`.
+
+After generation, `createClient()` from `supabase/server` and `supabase/client` will infer table types from `Database`.
 
 **Local project** (with `supabase start`):
 
 ```bash
 yarn db:types:local
 ```
-
-**Manual** (replace `<project-ref>` with your project ID from the dashboard URL):
-
-```bash
-npx supabase gen types typescript --project-id <project-ref> --schema public > supabase/types/database.types.ts
-```
-
-After generation, `createClient()` from `supabase/server` and `supabase/client` will infer table types from `Database`.
 
 ## Configuration Files
 
