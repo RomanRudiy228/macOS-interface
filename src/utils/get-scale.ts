@@ -1,4 +1,4 @@
-import { SCALES } from "@const";
+import { SCALES } from "@/const";
 
 export function getScale(hoveredIndex: number | null, index: number): number {
   if (hoveredIndex === null) return 1;

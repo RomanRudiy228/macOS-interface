@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
-import { DockMenuWrapper, DockMenuSkeleton } from "@components/dock-menu";
-import { TooltipProvider } from "@shared";
+import { DockMenuWrapper } from "@/components/dock-menu";
+import { TooltipProvider } from "@/components/tooltip";
 
 export const metadata: Metadata = {
   title: "macOS Interface",
@@ -19,7 +19,7 @@ export default function RootLayout({
       <body className="min-h-screen">
         <TooltipProvider delayDuration={100}>
           {children}
-          <Suspense fallback={<DockMenuSkeleton />}>
+          <Suspense fallback={null}>
             <DockMenuWrapper />
           </Suspense>
         </TooltipProvider>

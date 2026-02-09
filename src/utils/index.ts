@@ -1,1 +1,2 @@
-export { getScale } from "./get-scale";
+export * from "./get-scale";
+export * from "./can-remove-from-dock";

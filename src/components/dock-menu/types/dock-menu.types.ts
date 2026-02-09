@@ -1,4 +1,4 @@
-import type { DockItemView } from "@services/dock-menu";
+import type { DockItemView } from "@/types";
 
 export type DockMenuProps = {
   items: DockItemView[];

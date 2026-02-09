@@ -3,8 +3,8 @@
 import { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { reorderDockItems, removeFromDock } from "@actions";
-import type { DockItemView } from "@services/dock-menu";
+import { reorderDockItems, removeFromDock } from "@/actions";
+import type { DockItemView } from "@/types";
 
 export function useDockItems(initialItems: DockItemView[]) {
   const [items, setItems] = useState<DockItemView[]>(initialItems);
@@ -17,7 +17,7 @@ export function useDockItems(initialItems: DockItemView[]) {
 
     if (!over) {
       const item = mainItems.find((i) => i.id === active.id);
-      if (!item || item.is_locked) return;
+      if (!item || item.isLocked) return;
       const newMain = mainItems.filter((i) => i.id !== active.id);
       setItems([...newMain, binItem]);
       if (!item.id.startsWith("fallback-")) {

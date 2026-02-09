@@ -1,5 +1,4 @@
-export { DockMenu } from "./dock-menu";
-export { DockMenuWrapper } from "./dock-menu-wrapper";
-export { DockMenuClient, DockMenuSkeleton } from "./dock-menu-client";
-export { SortableDockItem } from "./dock-item";
-export { useDockItems } from "./hooks";
+export * from "./dock-menu";
+export * from "./dock-menu-wrapper";
+export * from "./dock-item";
+export * from "@/hooks";

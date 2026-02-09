@@ -1,4 +1,4 @@
-import type { DockItemView } from "@services/dock-menu";
+import type { DockItemView } from "@/types";
 
 export type SortableDockItemProps = {
   item: DockItemView;
@@ -6,5 +6,5 @@ export type SortableDockItemProps = {
   hoveredIndex: number | null;
   onMouseEnter: () => void;
   onMouseLeave: () => void;
-  onImageLoad?: () => void;
+  variant?: "default" | "bin";
 };

@@ -1,2 +1,3 @@
-export { reorderDockItems } from "./dock-menu-reorder";
-export { removeFromDock } from "./dock-menu-remove";
+export * from "./dock-menu-get";
+export * from "./dock-menu-reorder";
+export * from "./dock-menu-remove";

@@ -1,1 +1,1 @@
-export type { SortableDockItemProps } from "./sortable-dock-menu.types";
+export * from "./sortable-dock-item.types";

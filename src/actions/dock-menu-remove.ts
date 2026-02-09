@@ -1,7 +1,10 @@
 "use server";
 
-import { removeDockItemService } from "@services/dock-menu";
+import { cookies } from "next/headers";
+import { createClient } from "@/supabase/server";
 
 export async function removeFromDock(itemId: string) {
-  return removeDockItemService(itemId);
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  await supabase.from("dock_items").delete().eq("id", itemId);
 }

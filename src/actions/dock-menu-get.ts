@@ -1,11 +1,9 @@
+"use server";
+
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@const";
-import type { DockItemView } from "./types";
-
-export function canRemoveFromDock(item: DockItemView): boolean {
-  return !item.is_locked;
-}
+import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@/const";
+import type { DockItemView } from "@/types";
 
 export async function getDockItems(): Promise<DockItemView[]> {
   try {
@@ -28,7 +26,7 @@ export async function getDockItems(): Promise<DockItemView[]> {
         id: row.id,
         name: app.name,
         src: app.src,
-        is_locked: row.is_locked ?? false,
+        isLocked: row.is_locked ?? false,
       });
     }
 
@@ -45,7 +43,7 @@ function getFallbackDockItems(): DockItemView[] {
       id: `fallback-${index}-${appKey}`,
       name: app.name,
       src: app.src,
-      is_locked: false,
+      isLocked: false,
     };
   });
 }
