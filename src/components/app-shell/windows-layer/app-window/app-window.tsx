@@ -2,7 +2,14 @@
 
 import React, { useCallback, useState } from "react";
 import { useAppWindowDrag, useWindowMinimizeTransition } from "@/hooks";
-import type { AppWindowProps } from "@/types";
+
+export type AppWindowProps = {
+  title: string;
+  onClose: () => void;
+  onMinimize: () => void;
+  isActive: boolean;
+  onFocus: () => void;
+};
 
 export const AppWindow: React.FC<AppWindowProps> = ({
   title,

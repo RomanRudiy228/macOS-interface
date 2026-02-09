@@ -2,7 +2,7 @@
 
 import React from "react";
 import { WindowsProvider } from "@/contexts";
-import { WindowsLayer } from "@/components/windows-layer";
+import { WindowsLayer } from "@/components/app-shell/windows-layer";
 
 export type AppShellProps = {
   children: React.ReactNode;
