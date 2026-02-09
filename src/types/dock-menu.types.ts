@@ -4,3 +4,16 @@ export type DockItemView = {
   src: string;
   isLocked: boolean;
 };
+
+export type DockMenuProps = {
+  items: DockItemView[];
+};
+
+export type SortableDockItemProps = {
+  item: DockItemView;
+  index: number;
+  hoveredIndex: number | null;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  variant?: "default" | "bin";
+};

@@ -14,7 +14,7 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableDockItem } from "@/components/dock-menu/dock-item";
 import { useDockItems } from "@/hooks";
-import type { DockMenuProps } from "./types";
+import type { DockMenuProps } from "@/types";
 
 export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   const [mounted, setMounted] = useState(false);

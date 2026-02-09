@@ -7,7 +7,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ICON_SIZE, SLOT_HEIGHT } from "@/const";
 import { getScale } from "@/utils";
-import type { SortableDockItemProps } from "./types";
+import type { SortableDockItemProps } from "@/types";
 
 function DockItemContent({
   item,
