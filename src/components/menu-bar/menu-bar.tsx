@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Wifi, Search } from "lucide-react";
-import { formatMacOSTime } from "@/shared/lib/date";
+import { formatMacOSTime } from "@/utils/date";
 
 export const Menubar = () => {
   const [date, setDate] = useState<Date | null>(null);
