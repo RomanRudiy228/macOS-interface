@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   DndContext,
   pointerWithin,
@@ -17,17 +17,22 @@ import { useDockItems } from "@/hooks";
 import type { DockMenuProps } from "./types";
 
 export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
+  const [mounted, setMounted] = useState(false);
   const { items, mainItems, binItem, handleDragEnd } =
     useDockItems(initialItems);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const effectiveHoveredIndex = isDragging ? null : hoveredIndex;
 
+  useEffect(() => setMounted(true), []);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
     })
   );
+
+  if (!mounted) return null;
 
   return (
     <nav
