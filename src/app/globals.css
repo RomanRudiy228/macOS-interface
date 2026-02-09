@@ -67,3 +67,28 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .app-window {
+    transform: translate(
+      calc(-50% + var(--app-window-dx, 0px)),
+      calc(-50% + var(--app-window-dy, 0px))
+    );
+    transition: width 200ms ease-out, min-height 200ms ease-out;
+    transform-origin: center bottom;
+  }
+
+  .app-window.app-window--minimizing {
+    transform: translate(
+        calc(-50% + var(--app-window-dx, 0px)),
+        calc(-50% + var(--app-window-dy, 0px))
+      )
+      scale(0);
+    opacity: 0;
+    transition:
+      width 200ms ease-out,
+      min-height 200ms ease-out,
+      transform 300ms ease-out,
+      opacity 300ms ease-out;
+  }
+}

@@ -16,4 +16,7 @@ export type SortableDockItemProps = {
   onMouseEnter: () => void;
   onMouseLeave: () => void;
   variant?: "default" | "bin";
+  isOpen?: boolean;
+  isActive?: boolean;
+  onOpen?: () => void;
 };
