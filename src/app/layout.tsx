@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
-import { WindowsProvider } from "@/contexts";
+import { WindowsProvider, WallpaperProvider } from "@/contexts";
+import { DesktopBackground } from "@/components/desktop-background";
 import { WindowsLayer } from "@/components/windows-layer";
 import { DockMenuWrapper } from "@/components/dock-menu";
 import { TooltipProvider } from "@/components/tooltip";
@@ -21,11 +22,15 @@ export default function RootLayout({
       <body className="min-h-screen">
         <TooltipProvider delayDuration={100}>
           <WindowsProvider>
-            {children}
-            <Suspense fallback={null}>
-              <DockMenuWrapper />
-            </Suspense>
-            <WindowsLayer />
+            <WallpaperProvider>
+              <DesktopBackground>
+                {children}
+                <Suspense fallback={null}>
+                  <DockMenuWrapper />
+                </Suspense>
+                <WindowsLayer />
+              </DesktopBackground>
+            </WallpaperProvider>
           </WindowsProvider>
         </TooltipProvider>
       </body>

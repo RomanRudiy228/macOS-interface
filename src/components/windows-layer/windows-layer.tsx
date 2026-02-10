@@ -2,7 +2,15 @@
 
 import React from "react";
 import { AppWindow } from "@/components/windows-layer/app-window";
+import { WallpapersWindow } from "@/components/windows-layer/wallpapers-window";
 import { useWindows } from "@/contexts";
+
+const WINDOW_CONTENT: Record<
+  string,
+  React.ReactNode
+> = {
+  wallpapers: <WallpapersWindow />,
+};
 
 export const WindowsLayer: React.FC = () => {
   const {
@@ -25,7 +33,9 @@ export const WindowsLayer: React.FC = () => {
             onFocus={() => setActiveWindow(w.id)}
             onClose={() => closeWindow(w.id)}
             onMinimize={() => minimizeWindow(w.id)}
-          />
+          >
+            {WINDOW_CONTENT[w.id]}
+          </AppWindow>
         ))}
     </>
   );
