@@ -550,12 +550,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:15.5.12":
-  version: 15.5.12
-  resolution: "@next/eslint-plugin-next@npm:15.5.12"
+"@next/eslint-plugin-next@npm:15.5.11":
+  version: 15.5.11
+  resolution: "@next/eslint-plugin-next@npm:15.5.11"
   dependencies:
     fast-glob: "npm:3.3.1"
-  checksum: 10c0/c9a88aa628ad77c8ab12112835227ef093db72846223ce559881b0fc99ce7b61324f1bcd987309b4682c397293f633f4ad4f38a3d8527a84c7b51521b89a7dd9
+  checksum: 10c0/4a9667ad428107b9dbaa6d1c3d931b386a2c33a481f120bee5e0ea3be2ee3d8e442bb64ca96f9caa70df85eee643d025a5c5bf803bbcd45069d37218620cf521
   languageName: node
   linkType: hard
 
@@ -1050,42 +1050,42 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/auth-js@npm:2.95.3":
-  version: 2.95.3
-  resolution: "@supabase/auth-js@npm:2.95.3"
+"@supabase/auth-js@npm:2.94.0":
+  version: 2.94.0
+  resolution: "@supabase/auth-js@npm:2.94.0"
   dependencies:
     tslib: "npm:2.8.1"
-  checksum: 10c0/37d083db5202be2ca84a0ed69650aa060f318cd82db908ab8a083db521ecdb79b03d90d1978d26d0011d52e3b959cebc9465a4ebc3b1559dde0ece1a0b7cc950
+  checksum: 10c0/0ae315b5970c331862b2a003b6447e6ac1836829e18ffdcf2be5ca992ba923bfbe71acc6073bf0a56317f826034bd836da69871846f1a20b7a1a56f32a01f9fd
   languageName: node
   linkType: hard
 
-"@supabase/functions-js@npm:2.95.3":
-  version: 2.95.3
-  resolution: "@supabase/functions-js@npm:2.95.3"
+"@supabase/functions-js@npm:2.94.0":
+  version: 2.94.0
+  resolution: "@supabase/functions-js@npm:2.94.0"
   dependencies:
     tslib: "npm:2.8.1"
-  checksum: 10c0/ba7a1dc121b33f385f329011346a8a366a66cffb4fd37af8c92ce4f7536b549f718927b2ba5300f13b48e5128cdcc9df3e5c46d1c7e6c3916758c57147df49a8
+  checksum: 10c0/27f3a55e8d1a9869e2237d1eb43f8b6ab11e50526ad26969f91b1283cec9559155eb913bc7524cc2bbcc99415f86043f9947d29d75d4a6ca3250ea941153df3b
   languageName: node
   linkType: hard
 
-"@supabase/postgrest-js@npm:2.95.3":
-  version: 2.95.3
-  resolution: "@supabase/postgrest-js@npm:2.95.3"
+"@supabase/postgrest-js@npm:2.94.0":
+  version: 2.94.0
+  resolution: "@supabase/postgrest-js@npm:2.94.0"
   dependencies:
     tslib: "npm:2.8.1"
-  checksum: 10c0/2171f8fc054393e5b07e88017022424e0b13afed30f523ac64fb34fb71b20ab23fba7451fe2280b32a407fd03de0618d26ee97d5f89cd48b76d46ead1f849d41
+  checksum: 10c0/4d1813f07cb3a05add0bb36c5102f621f44264ecc15933ade48ce8b0388a93e09e0d2e2697c53a7af63f6131f314a11ed57712f3b258f054395fe3a6a7ceda72
   languageName: node
   linkType: hard
 
-"@supabase/realtime-js@npm:2.95.3":
-  version: 2.95.3
-  resolution: "@supabase/realtime-js@npm:2.95.3"
+"@supabase/realtime-js@npm:2.94.0":
+  version: 2.94.0
+  resolution: "@supabase/realtime-js@npm:2.94.0"
   dependencies:
     "@types/phoenix": "npm:^1.6.6"
     "@types/ws": "npm:^8.18.1"
     tslib: "npm:2.8.1"
     ws: "npm:^8.18.2"
-  checksum: 10c0/66aa6d8af06fac1321f1e4d959a16b3f02e536931264bf6c1884f5d11b30946de3ae828c7c71ce55a6637ece7932fc880c1200abe27827487fdd0b64cebf6c1d
+  checksum: 10c0/870113c181a086986ff666a3ca0a0eb417ffdc74b32e09ba1d20579d33ed4f5a09515a5f4c801682cbecd1ae653e39888647c4410e2d0be990be4f4264d6ccb5
   languageName: node
   linkType: hard
 
@@ -1100,26 +1100,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/storage-js@npm:2.95.3":
-  version: 2.95.3
-  resolution: "@supabase/storage-js@npm:2.95.3"
+"@supabase/storage-js@npm:2.94.0":
+  version: 2.94.0
+  resolution: "@supabase/storage-js@npm:2.94.0"
   dependencies:
     iceberg-js: "npm:^0.8.1"
     tslib: "npm:2.8.1"
-  checksum: 10c0/5393e95cd7c1b7de0b05881638479f23525b4e47f2d5efadcc25f340764c0abb6365cad7846818b55cb257d44077724d9be14808657c949a6fd58b3b63cd03ab
+  checksum: 10c0/f80efbb1e7836dfb8eea1a9de8104c772e006cb3da7b797e395eba9b7a30b04b488d58fcc7326666fa992037f848c2c09706ef40bda7e0e1ada41356e73882a8
   languageName: node
   linkType: hard
 
 "@supabase/supabase-js@npm:^2.49.0":
-  version: 2.95.3
-  resolution: "@supabase/supabase-js@npm:2.95.3"
+  version: 2.94.0
+  resolution: "@supabase/supabase-js@npm:2.94.0"
   dependencies:
-    "@supabase/auth-js": "npm:2.95.3"
-    "@supabase/functions-js": "npm:2.95.3"
-    "@supabase/postgrest-js": "npm:2.95.3"
-    "@supabase/realtime-js": "npm:2.95.3"
-    "@supabase/storage-js": "npm:2.95.3"
-  checksum: 10c0/46373e1c1d20a09161044879e34f7224c62e05fd803fe80124adcb9c0fe2c08319f4459473c4837783136eb3cb248b0606d6e92bc4a4e6519acecbc22c8c8c6b
+    "@supabase/auth-js": "npm:2.94.0"
+    "@supabase/functions-js": "npm:2.94.0"
+    "@supabase/postgrest-js": "npm:2.94.0"
+    "@supabase/realtime-js": "npm:2.94.0"
+    "@supabase/storage-js": "npm:2.94.0"
+  checksum: 10c0/e564606e830575bca11bac7f693e331d2f13adddae88663f7547bc7ee7f1420101f5f38f3ed89a8e159b2023518ee60ef69f1e1a25a85825d034bd48084edc37
   languageName: node
   linkType: hard
 
@@ -1162,21 +1162,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
-  version: 25.2.2
-  resolution: "@types/node@npm:25.2.2"
-  dependencies:
-    undici-types: "npm:~7.16.0"
-  checksum: 10c0/45aa45b00df0aac4712c2d6e934a6ed21ac54e0284dd726df1c7620b8c7d36a4fb601b9f8fe1d2951298d1ee7618cf8275688e329c295eb36e8b8fa827a8e334
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^22.10.2":
-  version: 22.19.10
-  resolution: "@types/node@npm:22.19.10"
+"@types/node@npm:*, @types/node@npm:^22.10.2":
+  version: 22.19.8
+  resolution: "@types/node@npm:22.19.8"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/fb1484f68c259abb73b018e6a521dba2ffe7846128d3aacc7fba5672f354ddb364cb4c81b5a0e686cf58ea0067df4d68d4159f668c864238a0c3fe7fee603341
+  checksum: 10c0/35c3c0916a983dd33ddd8710d868a2678192c2ff3c6677e1d348872b78b9911c929279579c78efac1c9e61958b3f61cc5d3e725aaa41462f16f531d381ff15e6
   languageName: node
   linkType: hard
 
@@ -1204,12 +1195,12 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^18.3.12":
-  version: 18.3.28
-  resolution: "@types/react@npm:18.3.28"
+  version: 18.3.27
+  resolution: "@types/react@npm:18.3.27"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
-  checksum: 10c0/683e19cd12b5c691215529af2e32b5ffbaccae3bf0ba93bfafa0e460e8dfee18423afed568be2b8eadf4b837c3749dd296a4f64e2d79f68fa66962c05f5af661
+  checksum: 10c0/a761d2f58de03d0714806cc65d32bb3d73fb33a08dd030d255b47a295e5fff2a775cf1c20b786824d8deb6454eaccce9bc6998d9899c14fc04bbd1b0b0b72897
   languageName: node
   linkType: hard
 
@@ -1704,13 +1695,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-generator-function@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "async-generator-function@npm:1.0.0"
-  checksum: 10c0/2c50ef856c543ad500d8d8777d347e3c1ba623b93e99c9263ecc5f965c1b12d2a140e2ab6e43c3d0b85366110696f28114649411cbcd10b452a92a2318394186
-  languageName: node
-  linkType: hard
-
 "autoprefixer@npm:^10.4.20":
   version: 10.4.24
   resolution: "autoprefixer@npm:10.4.24"
@@ -1883,9 +1867,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001579, caniuse-lite@npm:^1.0.30001759, caniuse-lite@npm:^1.0.30001766":
-  version: 1.0.30001769
-  resolution: "caniuse-lite@npm:1.0.30001769"
-  checksum: 10c0/161b8c30ab967371807d45d361f0d5bc06e38ef2dbf811493d70cd97c21e1522f5b91fd944c419a00047ee09c931ca64627f125a9ffa7a17a9fdff8dad9765b0
+  version: 1.0.30001767
+  resolution: "caniuse-lite@npm:1.0.30001767"
+  checksum: 10c0/37067c6d2b26623f81494a1f206adbff2b80baed3318ba430684e428bd7d81be889f39db8ef081501d1db5f7dd5d15972892f173eb59c9f3bb780e0b38e6610a
   languageName: node
   linkType: hard
 
@@ -2123,6 +2107,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dnd-kit@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "dnd-kit@npm:0.0.2"
+  checksum: 10c0/298ebfa00f1ad36f6e41f2913a2a66f9e42671bc4d4e1d3dd5c49938a87414c70e326332acb212376a923e5bb1cbd7bd23d7aee47dae9ed703fe08c0265fa579
+  languageName: node
+  linkType: hard
+
 "doctrine@npm:^2.1.0":
   version: 2.1.0
   resolution: "doctrine@npm:2.1.0"
@@ -2336,10 +2327,10 @@ __metadata:
   linkType: hard
 
 "eslint-config-next@npm:^15.1.0":
-  version: 15.5.12
-  resolution: "eslint-config-next@npm:15.5.12"
+  version: 15.5.11
+  resolution: "eslint-config-next@npm:15.5.11"
   dependencies:
-    "@next/eslint-plugin-next": "npm:15.5.12"
+    "@next/eslint-plugin-next": "npm:15.5.11"
     "@rushstack/eslint-patch": "npm:^1.10.3"
     "@typescript-eslint/eslint-plugin": "npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
     "@typescript-eslint/parser": "npm:^5.4.2 || ^6.0.0 || ^7.0.0 || ^8.0.0"
@@ -2355,7 +2346,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/8aa69f8b9b767fda914ac6902775c13363cbe65c04e3f3c1b2bb6a95705ed0ae8044e625c33cab125cc95799358710acca721da5007649ca780dfdf2b9d1c8be
+  checksum: 10c0/155c946788903615f6d3805edbf24456b2f2124d68e9bd817c5d28ce3d5dfa2c9cc8f653e7ac3eca4b23aaa93d4b1ea7fd4a33a69b40e6e025a4fdfe59811c9a
   languageName: node
   linkType: hard
 
@@ -2824,23 +2815,20 @@ __metadata:
   linkType: hard
 
 "get-intrinsic@npm:^1.2.4, get-intrinsic@npm:^1.2.5, get-intrinsic@npm:^1.2.6, get-intrinsic@npm:^1.2.7, get-intrinsic@npm:^1.3.0":
-  version: 1.3.1
-  resolution: "get-intrinsic@npm:1.3.1"
+  version: 1.3.0
+  resolution: "get-intrinsic@npm:1.3.0"
   dependencies:
-    async-function: "npm:^1.0.0"
-    async-generator-function: "npm:^1.0.0"
     call-bind-apply-helpers: "npm:^1.0.2"
     es-define-property: "npm:^1.0.1"
     es-errors: "npm:^1.3.0"
     es-object-atoms: "npm:^1.1.1"
     function-bind: "npm:^1.1.2"
-    generator-function: "npm:^2.0.0"
     get-proto: "npm:^1.0.1"
     gopd: "npm:^1.2.0"
     has-symbols: "npm:^1.1.0"
     hasown: "npm:^2.0.2"
     math-intrinsics: "npm:^1.1.0"
-  checksum: 10c0/9f4ab0cf7efe0fd2c8185f52e6f637e708f3a112610c88869f8f041bb9ecc2ce44bf285dfdbdc6f4f7c277a5b88d8e94a432374d97cca22f3de7fc63795deb5d
+  checksum: 10c0/52c81808af9a8130f581e6a6a83e1ba4a9f703359e7a438d1369a5267a25412322f03dcbd7c549edaef0b6214a0630a28511d7df0130c93cfd380f4fa0b5b66a
   languageName: node
   linkType: hard
 
@@ -2866,11 +2854,11 @@ __metadata:
   linkType: hard
 
 "get-tsconfig@npm:^4.10.0":
-  version: 4.13.6
-  resolution: "get-tsconfig@npm:4.13.6"
+  version: 4.13.1
+  resolution: "get-tsconfig@npm:4.13.1"
   dependencies:
     resolve-pkg-maps: "npm:^1.0.0"
-  checksum: 10c0/bab6937302f542f97217cbe7cbbdfa7e85a56a377bc7a73e69224c1f0b7c9ae8365918e55752ae8648265903f506c1705f63c0de1d4bab1ec2830fef3e539a1a
+  checksum: 10c0/75c8ccebc411073338d7b7154f18659480d4888d1b12a74a21507d14c6e3b092e260454efe6ce33b33eaf513d86491b8f16191358fe3e0a682a215febd1846cc
   languageName: node
   linkType: hard
 
@@ -2893,13 +2881,13 @@ __metadata:
   linkType: hard
 
 "glob@npm:^13.0.0":
-  version: 13.0.1
-  resolution: "glob@npm:13.0.1"
+  version: 13.0.2
+  resolution: "glob@npm:13.0.2"
   dependencies:
     minimatch: "npm:^10.1.2"
     minipass: "npm:^7.1.2"
     path-scurry: "npm:^2.0.0"
-  checksum: 10c0/af7b863dec8dff74f61d7d6e53104e1f6bbdd482157a196cade8ed857481e876ec35181b38a059b2a7b93ea3b08248f4ff0792fef6dc91814fd5097a716f48e4
+  checksum: 10c0/3d4b09efa922c4cba9be6d5b9efae14384e7422aeb886eb35fba8a94820b8281474b8d3f16927127fb1a0c8580e18fc00e3fda03c8dc31fa0af3ba918edeeb04
   languageName: node
   linkType: hard
 
@@ -3348,10 +3336,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"isexe@npm:^3.1.1":
-  version: 3.1.4
-  resolution: "isexe@npm:3.1.4"
-  checksum: 10c0/6e1f78dd794118d263319c27c26a339eda6855b43e11e1a9013cb68578ce0396b74f11ea635e52b9466fb48a60abe70f3c9faf682f67988be092cf89b7c0dc1c
+"isexe@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "isexe@npm:4.0.0"
+  checksum: 10c0/5884815115bceac452877659a9c7726382531592f43dc29e5d48b7c4100661aed54018cb90bd36cb2eaeba521092570769167acbb95c18d39afdccbcca06c5ce
   languageName: node
   linkType: hard
 
@@ -3517,9 +3505,9 @@ __metadata:
   linkType: hard
 
 "lru-cache@npm:^11.0.0, lru-cache@npm:^11.1.0, lru-cache@npm:^11.2.1":
-  version: 11.2.5
-  resolution: "lru-cache@npm:11.2.5"
-  checksum: 10c0/cc98958d25dddf1c8a8cbdc49588bd3b24450e8dfa78f32168fd188a20d4a0331c7406d0f3250c86a46619ee288056fd7a1195e8df56dc8a9592397f4fbd8e1d
+  version: 11.2.6
+  resolution: "lru-cache@npm:11.2.6"
+  checksum: 10c0/73bbffb298760e71b2bfe8ebc16a311c6a60ceddbba919cfedfd8635c2d125fbfb5a39b71818200e67973b11f8d59c5a9e31d6f90722e340e90393663a66e5cd
   languageName: node
   linkType: hard
 
@@ -3552,6 +3540,7 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     class-variance-authority: "npm:^0.7.1"
     clsx: "npm:^2.1.1"
+    dnd-kit: "npm:^0.0.2"
     eslint: "npm:^9.17.0"
     eslint-config-next: "npm:^15.1.0"
     eslint-config-prettier: "npm:^9.1.0"
@@ -3566,6 +3555,7 @@ __metadata:
     tailwindcss-animate: "npm:^1.0.7"
     typescript: "npm:^5.7.2"
     typescript-eslint: "npm:^8.54.0"
+    yarn: "npm:^1.22.22"
   languageName: unknown
   linkType: soft
 
@@ -4472,12 +4462,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.3.5, semver@npm:^7.7.1, semver@npm:^7.7.3":
+"semver@npm:^7.3.5":
   version: 7.7.4
   resolution: "semver@npm:7.7.4"
   bin:
     semver: bin/semver.js
   checksum: 10c0/5215ad0234e2845d4ea5bb9d836d42b03499546ddafb12075566899fc617f68794bb6f146076b6881d755de17d6c6cc73372555879ec7dce2c2feee947866ad2
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.7.1, semver@npm:^7.7.3":
+  version: 7.7.3
+  resolution: "semver@npm:7.7.3"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/4afe5c986567db82f44c8c6faef8fe9df2a9b1d98098fc1721f57c696c4c21cebd572f297fc21002f81889492345b8470473bc6f4aff5fb032a6ea59ea2bc45e
   languageName: node
   linkType: hard
 
@@ -4702,11 +4701,11 @@ __metadata:
   linkType: hard
 
 "ssri@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "ssri@npm:13.0.0"
+  version: 13.0.1
+  resolution: "ssri@npm:13.0.1"
   dependencies:
     minipass: "npm:^7.0.3"
-  checksum: 10c0/405f3a531cd98b013cecb355d63555dca42fd12c7bc6671738aaa9a82882ff41cdf0ef9a2b734ca4f9a760338f114c29d01d9238a65db3ccac27929bd6e6d4b2
+  checksum: 10c0/cf6408a18676c57ff2ed06b8a20dc64bb3e748e5c7e095332e6aecaa2b8422b1e94a739a8453bf65156a8a47afe23757ba4ab52d3ea3b62322dc40875763e17a
   languageName: node
   linkType: hard
 
@@ -5121,13 +5120,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~7.16.0":
-  version: 7.16.0
-  resolution: "undici-types@npm:7.16.0"
-  checksum: 10c0/3033e2f2b5c9f1504bdc5934646cb54e37ecaca0f9249c983f7b1fc2e87c6d18399ebb05dc7fd5419e02b2e915f734d872a65da2e3eeed1813951c427d33cc9a
-  languageName: node
-  linkType: hard
-
 "unique-filename@npm:^5.0.0":
   version: 5.0.0
   resolution: "unique-filename@npm:5.0.0"
@@ -5316,13 +5308,13 @@ __metadata:
   linkType: hard
 
 "which@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "which@npm:6.0.0"
+  version: 6.0.1
+  resolution: "which@npm:6.0.1"
   dependencies:
-    isexe: "npm:^3.1.1"
+    isexe: "npm:^4.0.0"
   bin:
     node-which: bin/which.js
-  checksum: 10c0/fe9d6463fe44a76232bb6e3b3181922c87510a5b250a98f1e43a69c99c079b3f42ddeca7e03d3e5f2241bf2d334f5a7657cfa868b97c109f3870625842f4cc15
+  checksum: 10c0/7e710e54ea36d2d6183bee2f9caa27a3b47b9baf8dee55a199b736fcf85eab3b9df7556fca3d02b50af7f3dfba5ea3a45644189836df06267df457e354da66d5
   languageName: node
   linkType: hard
 
@@ -5359,6 +5351,16 @@ __metadata:
   version: 5.0.0
   resolution: "yallist@npm:5.0.0"
   checksum: 10c0/a499c81ce6d4a1d260d4ea0f6d49ab4da09681e32c3f0472dee16667ed69d01dae63a3b81745a24bd78476ec4fcf856114cb4896ace738e01da34b2c42235416
+  languageName: node
+  linkType: hard
+
+"yarn@npm:^1.22.22":
+  version: 1.22.22
+  resolution: "yarn@npm:1.22.22"
+  bin:
+    yarn: bin/yarn.js
+    yarnpkg: bin/yarn.js
+  checksum: 10c0/8c77198c93d7542e7f4e131c63b66de357b7076ecfbcfe709ec0d674115c2dd9edaa45196e5510e6e9366d368707a802579e3402071002e1c9d9a99d491478de
   languageName: node
   linkType: hard
 

@@ -46,7 +46,15 @@ function DockItemContent({
 
 const SortableDockItemInner: React.FC<
   SortableDockItemProps & { variant: "default" }
-> = ({ item, index, hoveredIndex, onMouseEnter, onMouseLeave }) => {
+> = ({
+  item,
+  index,
+  hoveredIndex,
+  onMouseEnter,
+  onMouseLeave,
+  isOpen,
+  onOpen,
+}) => {
   const {
     attributes,
     listeners,
@@ -69,21 +77,36 @@ const SortableDockItemInner: React.FC<
     opacity: isDragging ? 0.6 : 1,
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    if (isDragging) return;
+    e.preventDefault();
+    onOpen?.();
+  };
+
   return (
     <li
       ref={setNodeRef}
       style={style}
-      className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
+      className="flex flex-col cursor-pointer items-center justify-end transition-all duration-200 ease-out origin-bottom"
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onClick={handleClick}
       {...attributes}
       {...listeners}
     >
-      <DockItemContent
-        item={item}
-        scale={scale}
-        className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom touch-none"
-      />
+      <div className="flex flex-col items-center">
+        <DockItemContent
+          item={item}
+          scale={scale}
+          className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom touch-none"
+        />
+        {isOpen && (
+          <span
+            className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-white"
+            aria-hidden
+          />
+        )}
+      </div>
     </li>
   );
 };
@@ -94,22 +117,38 @@ const BinDockItem: React.FC<SortableDockItemProps & { variant: "bin" }> = ({
   hoveredIndex,
   onMouseEnter,
   onMouseLeave,
+  isOpen,
+  onOpen,
 }) => {
   const scale = getScale(hoveredIndex, index);
   const size = Math.ceil(ICON_SIZE * scale);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onOpen?.();
+  };
+
   return (
     <li
-      className="flex flex-col cursor-default items-center justify-end transition-all duration-200 ease-out origin-bottom"
+      className="flex flex-col cursor-pointer items-center justify-end transition-all duration-200 ease-out origin-bottom"
       style={{ minWidth: size, height: SLOT_HEIGHT }}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onClick={handleClick}
     >
-      <DockItemContent
-        item={item}
-        scale={scale}
-        className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
-      />
+      <div className="flex flex-col items-center">
+        <DockItemContent
+          item={item}
+          scale={scale}
+          className="relative block shrink-0 transition-transform duration-200 ease-out origin-bottom"
+        />
+        {isOpen && (
+          <span
+            className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-white"
+            aria-hidden
+          />
+        )}
+      </div>
     </li>
   );
 };

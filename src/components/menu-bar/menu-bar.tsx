@@ -3,6 +3,16 @@
 import { useState, useEffect } from "react";
 import { Wifi, Search } from "lucide-react";
 import { formatMacOSTime } from "@/utils/date";
+import { MenuBarItem } from "@/components/context-menu/context-menu";
+import {
+  finderMenuItems,
+  fileMenuItems,
+  editMenuItems,
+  viewMenuItems,
+  goMenuItems,
+  windowMenuItems,
+  helpMenuItems,
+} from "@/const/context-const";
 
 export const Menubar = () => {
   const [date, setDate] = useState<Date | null>(null);
@@ -24,21 +34,63 @@ export const Menubar = () => {
           </svg>
         </button>
 
-        {/* Finder */}
-        <button className="font-bold text-black cursor-default hover:bg-black/5 px-2 py-0.5 rounded transition-colors">
+        {/* Finder with Context Menu */}
+        <MenuBarItem
+          label="Finder"
+          items={finderMenuItems}
+          className="font-bold text-black cursor-default hover:bg-black/5 px-2 py-0.5 rounded transition-colors"
+        >
           Finder
-        </button>
-
-        {/* Menu */}
+        </MenuBarItem>
+        {/* Menu Items with Context Menus */}
         <nav className="hidden md:flex gap-1 font-medium text-black/90">
-          {["File", "Edit", "View", "Go", "Window", "Help"].map((item) => (
-            <button
-              key={item}
-              className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
-            >
-              {item}
-            </button>
-          ))}
+          <MenuBarItem
+            label="File"
+            items={fileMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            File
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Edit"
+            items={editMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Edit
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="View"
+            items={viewMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            View
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Go"
+            items={goMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Go
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Window"
+            items={windowMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Window
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Help"
+            items={helpMenuItems}
+            className="hover:bg-black/5 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Help
+          </MenuBarItem>
         </nav>
       </div>
 
