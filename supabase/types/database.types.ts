@@ -33,6 +33,93 @@ export type Database = {
         };
         Relationships: [];
       };
+      settings: {
+        Row: {
+          id: number;
+          system_color: string | null;
+          theme: string | null;
+          wallpaper_id: string | null;
+        };
+        Insert: {
+          id?: never;
+          system_color?: string | null;
+          theme?: string | null;
+          wallpaper_id?: string | null;
+        };
+        Update: {
+          id?: never;
+          system_color?: string | null;
+          theme?: string | null;
+          wallpaper_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settings_system_color_fkey";
+            columns: ["system_color"];
+            isOneToOne: false;
+            referencedRelation: "system_colors";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settings_theme_fkey";
+            columns: ["theme"];
+            isOneToOne: false;
+            referencedRelation: "themes";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      system_colors: {
+        Row: {
+          css: string;
+          id: string;
+          name: string;
+        };
+        Insert: {
+          css: string;
+          id: string;
+          name: string;
+        };
+        Update: {
+          css?: string;
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      themes: {
+        Row: {
+          id: string;
+          name: string;
+        };
+        Insert: {
+          id: string;
+          name: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      wallpapers: {
+        Row: {
+          background_image: string;
+          id: string;
+          name: string;
+        };
+        Insert: {
+          background_image: string;
+          id: string;
+          name: string;
+        };
+        Update: {
+          background_image?: string;
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

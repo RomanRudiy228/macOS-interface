@@ -13,6 +13,7 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { SortableDockItem } from "@/components/dock-menu/dock-item";
+import { useWindows } from "@/contexts";
 import { useDockItems } from "@/hooks";
 import type { DockMenuProps } from "@/types";
 
@@ -23,6 +24,14 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const effectiveHoveredIndex = isDragging ? null : hoveredIndex;
+  const {
+    openWindow,
+    isOpen,
+    isActive,
+    restoreWindow,
+    minimizeWindow,
+    isMinimized,
+  } = useWindows();
 
   useEffect(() => setMounted(true), []);
 
@@ -31,6 +40,18 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
       activationConstraint: { distance: 8 },
     })
   );
+
+  const handleOpenApp = (itemId: string, itemName: string) => {
+    if (!isOpen(itemId)) {
+      return openWindow(itemId, itemName);
+    }
+
+    if (isMinimized(itemId)) {
+      return restoreWindow(itemId);
+    }
+
+    return minimizeWindow(itemId);
+  };
 
   if (!mounted) return null;
 
@@ -61,6 +82,9 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
                 hoveredIndex={effectiveHoveredIndex}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
+                isOpen={isOpen(item.id)}
+                isActive={isActive(item.id)}
+                onOpen={() => handleOpenApp(item.id, item.name)}
               />
             ))}
           </SortableContext>
@@ -79,6 +103,8 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
             onMouseEnter={() => setHoveredIndex(items.length - 1)}
             onMouseLeave={() => setHoveredIndex(null)}
             variant="bin"
+            isOpen={isOpen(binItem.id)}
+            onOpen={() => handleOpenApp(binItem.id, binItem.name)}
           />
         </ul>
       </DndContext>
