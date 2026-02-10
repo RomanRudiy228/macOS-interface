@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 import { defaultWallpaperId, wallpapers } from "@/shared/data/wallpapers";
 
 type DesktopScreenProps = {
