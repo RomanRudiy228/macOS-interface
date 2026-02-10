@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Wifi, Search } from "lucide-react";
 import { formatMacOSTime } from "@/utils/date";
-import { MenuBarItem } from "@/components/context-menu/ContextMenu";
+import { MenuBarItem } from "@/components/context-menu/context-menu";
 import {
   finderMenuItems,
   fileMenuItems,
@@ -13,7 +13,6 @@ import {
   windowMenuItems,
   helpMenuItems,
 } from "@/const/context-const";
-
 
 export const Menubar = () => {
   const [date, setDate] = useState<Date | null>(null);
@@ -35,7 +34,7 @@ export const Menubar = () => {
           </svg>
         </button>
 
-  {/* Finder with Context Menu */}
+        {/* Finder with Context Menu */}
         <MenuBarItem
           label="Finder"
           items={finderMenuItems}
@@ -43,7 +42,7 @@ export const Menubar = () => {
         >
           Finder
         </MenuBarItem>
- {/* Menu Items with Context Menus */}
+        {/* Menu Items with Context Menus */}
         <nav className="hidden md:flex gap-1 font-medium text-black/90">
           <MenuBarItem
             label="File"

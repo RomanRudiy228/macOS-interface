@@ -1,4 +1,4 @@
-import { MenuItem } from "../components/context-menu/ContextMenu";
+import { MenuItem } from "../components/context-menu/context-menu";
 
 // -----------------------------------------------------------
 // Finder Menu
