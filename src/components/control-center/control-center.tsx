@@ -10,15 +10,8 @@ import {
 import { cn } from "@/utils/theme-utilis";
 
 export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
-  const {
-    theme,
-    activeColor,
-    colors,
-    currentWallpaper,
-    isLoading,
-    toggleTheme,
-    changeColor,
-  } = useSystemSettings();
+  const { theme, activeColor, colors, isLoading, toggleTheme, changeColor } =
+    useSystemSettings();
 
   const isDarkMode = theme === "dark";
   const loadingCircles = [1, 2, 3, 4, 5, 6, 7];
@@ -64,7 +57,6 @@ export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
                   d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22V2Z"
                   fill={isDarkMode ? "#FFFFFF" : "#3A3A3A"}
                 />
-
                 <path
                   d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22V2Z"
                   fill={isDarkMode ? "#4A4A4A" : "#FFFFFF"}
@@ -96,7 +88,7 @@ export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
             </span>
 
             <div className="flex flex-wrap gap-3 items-center">
-              {isLoading || colors.length === 0
+              {isLoading
                 ? loadingCircles.map((i) => (
                     <div
                       key={i}
@@ -134,20 +126,12 @@ export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
             )}
           >
             <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 shadow-sm border border-black/5 dark:border-white/10 bg-gray-300">
-              {currentWallpaper ? (
-                <img
-                  src={currentWallpaper}
-                  alt="Wallpaper"
-                  className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-700"
-                />
-              ) : (
-                <div className="w-full h-full bg-blue-500/20 animate-pulse" />
-              )}
+              <div className="w-full h-full bg-blue-500/20 animate-pulse" />
             </div>
 
             <div className="flex flex-col justify-center">
               <span className="text-[14px] font-semibold text-slate-800 dark:text-white leading-tight">
-                Ventura
+                Wallpaper
               </span>
               <span className="text-[12px] text-slate-500 dark:text-slate-300 leading-tight opacity-80 mt-0.5">
                 Dynamic Wallpaper

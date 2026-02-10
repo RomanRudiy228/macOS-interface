@@ -18,53 +18,47 @@ export const useSystemSettings = () => {
   const { setTheme, theme } = useTheme();
   const supabase = createClient();
 
-  const [activeColor, setActiveColor] = useState("blue");
+  const [activeColor, setActiveColor] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const colors = STATIC_COLORS;
-  const [currentWallpaper, setCurrentWallpaper] = useState("");
-
   useEffect(() => {
-    const fetchData = async () => {
-      const { data: settingsData } = await supabase
+    const fetchSettings = async () => {
+      const { data, error } = await supabase
         .from("settings")
-        .select(`*, wallpapers ( thumbnail )`)
+        .select("theme, system_color")
+        .eq("id", 1)
         .single();
 
-      if (settingsData) {
-        const settings = settingsData as unknown as Settings & {
-          wallpapers: { thumbnail: string };
-        };
-
-        if (settings.theme && settings.theme !== theme) {
-          setTheme(settings.theme);
-        }
-
-        setActiveColor(settings.system_color);
-
-        applySystemTheme(settings.system_color, STATIC_COLORS);
-
-        if (settings.wallpapers?.thumbnail) {
-          setCurrentWallpaper(settings.wallpapers.thumbnail);
-        }
+      if (error || !data) {
+        console.error("Settings fetch error:", error);
+        setIsLoading(false);
+        return;
       }
+
+      if (data.theme && data.theme !== theme) {
+        setTheme(data.theme);
+      }
+
+      if (data.system_color) {
+        setActiveColor(data.system_color);
+        applySystemTheme(data.system_color, STATIC_COLORS);
+      }
+
       setIsLoading(false);
     };
 
-    fetchData();
+    fetchSettings();
   }, []);
 
   const toggleTheme = async (checked: boolean) => {
     const newTheme = checked ? "dark" : "light";
     setTheme(newTheme);
-
     await supabase.from("settings").update({ theme: newTheme }).eq("id", 1);
   };
 
   const changeColor = async (colorId: string) => {
     setActiveColor(colorId);
     applySystemTheme(colorId, STATIC_COLORS);
-
     await supabase
       .from("settings")
       .update({ system_color: colorId })
@@ -74,8 +68,7 @@ export const useSystemSettings = () => {
   return {
     theme,
     activeColor,
-    colors,
-    currentWallpaper,
+    colors: STATIC_COLORS,
     isLoading,
     toggleTheme,
     changeColor,
