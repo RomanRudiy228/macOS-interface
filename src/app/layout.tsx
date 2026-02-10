@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
-import { AppShell } from "@/components/app-shell";
+import { WindowsProvider } from "@/contexts";
+import { WindowsLayer } from "@/components/windows-layer";
 import { DockMenuWrapper } from "@/components/dock-menu";
 import { TooltipProvider } from "@/components/tooltip";
 
@@ -17,14 +18,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body className="min-h-screen bg-gray-800">
+      <body className="min-h-screen">
         <TooltipProvider delayDuration={100}>
-          <AppShell>
+          <WindowsProvider>
             {children}
             <Suspense fallback={null}>
               <DockMenuWrapper />
             </Suspense>
-          </AppShell>
+            <WindowsLayer />
+          </WindowsProvider>
         </TooltipProvider>
       </body>
     </html>

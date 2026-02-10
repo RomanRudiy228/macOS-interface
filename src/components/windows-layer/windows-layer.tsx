@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AppWindow } from "@/components/app-shell/windows-layer/app-window";
+import { AppWindow } from "@/components/windows-layer/app-window";
 import { useWindows } from "@/contexts";
 
 export const WindowsLayer: React.FC = () => {
