@@ -5,7 +5,8 @@ export type Wallpaper = {
 };
 
 export type WallpaperContextValue = {
+  wallpapers: Wallpaper[];
   selectedWallpaperId: string;
-  selectedWallpaper: Wallpaper | undefined; 
+  selectedWallpaper: Wallpaper | undefined;
   setSelectedWallpaperId: (id: string) => void;
 };

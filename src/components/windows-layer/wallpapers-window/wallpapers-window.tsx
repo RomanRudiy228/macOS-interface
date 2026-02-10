@@ -2,16 +2,15 @@
 
 import React from "react";
 import { useWallpaper } from "@/contexts";
-import { wallpapers } from "@/const/wallpapers.const";
 
 export const WallpapersWindow: React.FC = () => {
-  const { selectedWallpaper, setSelectedWallpaperId } = useWallpaper();
+  const { wallpapers, selectedWallpaper, setSelectedWallpaperId } = useWallpaper();
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <section className="flex flex-col gap-3">
+    <div className="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-4">
+      <section className="flex flex-col gap-3 mx-auto w-full max-w-md">
         <div
-          className="h-48 w-full overflow-hidden rounded-xl bg-slate-100"
+          className="h-72 w-full overflow-hidden rounded-xl bg-slate-100"
           style={{
             backgroundImage: selectedWallpaper?.backgroundImage,
             backgroundSize: "cover",
@@ -26,25 +25,25 @@ export const WallpapersWindow: React.FC = () => {
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-base font-semibold text-slate-900">Wallpapers</h2>
-        <div className="flex gap-3 overflow-x-auto pb-2">
+      <section className="flex flex-col gap-4">
+        <h2 className="text-xl font-semibold text-slate-900">Wallpapers</h2>
+        <div className="grid grid-cols-4 gap-3">
           {wallpapers.map((wallpaper) => (
             <button
               key={wallpaper.id}
               type="button"
               onClick={() => setSelectedWallpaperId(wallpaper.id)}
-              className="flex shrink-0 flex-col items-center gap-2 rounded-lg p-1 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+              className="flex w-full flex-col items-center gap-1 rounded-lg p-0 transition-colors hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
             >
               <div
-                className="h-20 w-28 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+                className="w-full aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
                 style={{
                   backgroundImage: wallpaper.backgroundImage,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
               />
-              <span className="max-w-[7rem] truncate text-center text-xs text-slate-600">
+              <span className="w-full truncate text-center text-xs text-slate-600">
                 {wallpaper.name}
               </span>
             </button>

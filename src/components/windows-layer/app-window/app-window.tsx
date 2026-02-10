@@ -39,7 +39,7 @@ export const AppWindow: React.FC<AppWindowProps> = ({
     <div
       role="dialog"
       aria-label={`${title} window`}
-      className={`app-window fixed left-1/2 top-1/2 flex max-h-[90vh] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl ${isActive ? "z-40" : "z-[39]"} ${isCollapsed ? "w-[min(90vw,280px)] min-h-0" : "w-[min(90vw,720px)] min-h-[520px]"} ${isMinimizing ? "app-window--minimizing" : ""}`}
+      className={`app-window fixed left-1/2 top-1/2 flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl ${isActive ? "z-40" : "z-[39]"} ${isCollapsed ? "w-[min(90vw,280px)] min-h-0" : "h-[min(520px,90vh)] w-[min(90vw,720px)]"} ${isMinimizing ? "app-window--minimizing" : ""}`}
       style={
         {
           "--app-window-dx": `${dragOffset.x}px`,
@@ -91,7 +91,7 @@ export const AppWindow: React.FC<AppWindowProps> = ({
         </div>
 
         {!isCollapsed && (
-          <div className="flex-1 min-h-[460px] overflow-auto rounded-b-xl bg-white transition-[min-height,opacity] duration-200">
+          <div className="flex min-h-0 flex-1 flex-col overflow-auto rounded-b-xl bg-white transition-[opacity] duration-200">
             {children}
           </div>
         )}

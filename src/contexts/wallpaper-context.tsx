@@ -7,42 +7,54 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { setWallpaperId as setWallpaperIdAction } from "@/actions/settings-set-wallpaper";
 import {
   defaultWallpaperId,
-  wallpapers,
+  wallpapers as fallbackWallpapers,
 } from "@/const/wallpapers.const";
-
-import { getWallpaperById } from "@/utils/get-wallpaper";
-
-import { WallpaperContextValue } from "@/types/wallpaper.types";
+import type { Wallpaper } from "@/types/wallpaper.types";
+import type { WallpaperContextValue } from "@/types/wallpaper.types";
 
 const WallpaperContext = createContext<WallpaperContextValue | null>(null);
 
-export const WallpaperProvider: React.FC<{ children: React.ReactNode }> = ({
+type WallpaperProviderProps = {
+  children: React.ReactNode;
+  initialWallpapers: Wallpaper[];
+  initialWallpaperId: string | null;
+};
+
+export const WallpaperProvider: React.FC<WallpaperProviderProps> = ({
   children,
+  initialWallpapers,
+  initialWallpaperId,
 }) => {
-  const [selectedWallpaperId, setSelectedWallpaperIdState] =
-    useState(defaultWallpaperId);
+  const [selectedWallpaperId, setSelectedWallpaperIdState] = useState(
+    () => initialWallpaperId ?? defaultWallpaperId
+  );
 
   const setSelectedWallpaperId = useCallback((id: string) => {
     setSelectedWallpaperIdState(id);
+    setWallpaperIdAction(id);
   }, []);
 
+  const wallpapers =
+    initialWallpapers.length > 0 ? initialWallpapers : fallbackWallpapers;
   const selectedWallpaper = useMemo(
-    () => getWallpaperById(selectedWallpaperId),
-    [selectedWallpaperId]
+    () => wallpapers.find((w) => w.id === selectedWallpaperId),
+    [wallpapers, selectedWallpaperId]
   );
 
   const value: WallpaperContextValue = useMemo(
     () => ({
+      wallpapers,
       selectedWallpaperId,
       selectedWallpaper:
         selectedWallpaper ??
-        getWallpaperById(defaultWallpaperId) ??
+        wallpapers.find((w) => w.id === defaultWallpaperId) ??
         wallpapers[0],
       setSelectedWallpaperId,
     }),
-    [selectedWallpaperId, selectedWallpaper, setSelectedWallpaperId]
+    [wallpapers, selectedWallpaperId, selectedWallpaper, setSelectedWallpaperId]
   );
 
   return (
