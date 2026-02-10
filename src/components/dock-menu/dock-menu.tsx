@@ -42,15 +42,15 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   );
 
   const handleOpenApp = (itemId: string, itemName: string) => {
-    if (isOpen(itemId)) {
-      if (isMinimized(itemId)) {
-        restoreWindow(itemId);
-      } else {
-        minimizeWindow(itemId);
-      }
-    } else {
-      openWindow(itemId, itemName);
+    if (!isOpen(itemId)) {
+      return openWindow(itemId, itemName);
     }
+
+    if (isMinimized(itemId)) {
+      return restoreWindow(itemId);
+    }
+
+    return minimizeWindow(itemId);
   };
 
   if (!mounted) return null;
