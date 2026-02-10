@@ -1,17 +1,32 @@
 import { cn } from "@/lib/utils";
-import { defaultWallpaperId, wallpapers } from "@/shared/data/wallpapers";
+
+type Wallpaper = {
+  id: string;
+  name: string;
+  backgroundImage: string;
+};
 
 type DesktopScreenProps = {
   className?: string;
+  wallpapers: Wallpaper[];
   wallpaperId?: string;
 };
 
 export function DesktopScreen({
   className,
-  wallpaperId = defaultWallpaperId,
+  wallpapers,
+  wallpaperId,
 }: DesktopScreenProps) {
+  const fallbackWallpaper: Wallpaper = {
+    id: "sierra-dusk",
+    name: "Sierra Dusk",
+    backgroundImage:
+      "linear-gradient(140deg, #0f172a 0%, #1e293b 35%, #0f766e 70%, #22c55e 100%)",
+  };
   const wallpaper =
-    wallpapers.find((item) => item.id === wallpaperId) ?? wallpapers[0];
+    wallpapers.find((item) => item.id === wallpaperId) ??
+    wallpapers[0] ??
+    fallbackWallpaper;
 
   return (
     <div

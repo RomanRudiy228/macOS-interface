@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import { defaultWallpaperId } from "@/shared/data/wallpapers";
 
 type ThemeMode = "light" | "dark";
+
+type Wallpaper = {
+  id: string;
+  name: string;
+  backgroundImage: string;
+};
 
 type DesktopSettings = {
   wallpaperId: string;
@@ -13,57 +18,64 @@ type DesktopSettings = {
 
 type DesktopSettingsRow = {
   wallpaper_id: string | null;
-  accent_hsl: string | null;
+  system_color: string | null;
   theme: string | null;
 };
 
-const defaultSettings: DesktopSettings = {
-  wallpaperId: defaultWallpaperId,
-  accent: "214 92% 56%",
-  theme: "dark",
-};
+const fallbackWallpapers: Wallpaper[] = [
+  {
+    id: "sierra-dusk",
+    name: "Sierra Dusk",
+    backgroundImage:
+      "linear-gradient(140deg, #0f172a 0%, #1e293b 35%, #0f766e 70%, #22c55e 100%)",
+  },
+];
+
+const getDefaultWallpaperId = (items: Wallpaper[]) =>
+  items[0]?.id ?? "sierra-dusk";
 
 export async function GET() {
   const cookieStore = await cookies();
   const supabase = createClient(cookieStore);
 
+  const { data: wallpapersData } = await supabase
+    .from("wallpapers" as unknown as never)
+    .select("id, name, background_image")
+    .order("name", { ascending: true });
+
+  const wallpapers: Wallpaper[] =
+    (wallpapersData as Array<{
+      id: string;
+      name: string;
+      background_image: string;
+    }> | null)?.map((item) => ({
+      id: item.id,
+      name: item.name,
+      backgroundImage: item.background_image,
+    })) ?? fallbackWallpapers;
+
+  const defaultSettings: DesktopSettings = {
+    wallpaperId: getDefaultWallpaperId(wallpapers),
+    accent: "214 92% 56%",
+    theme: "dark",
+  };
+
   let settings = defaultSettings;
 
-  const { data: userResult } = await supabase.auth.getUser();
-  const user = userResult?.user;
+  const { data, error } = await supabase
+    .from("settings" as unknown as never)
+    .select("wallpaper_id, system_color, theme")
+    .maybeSingle();
 
-  if (user) {
-    const { data, error } = await supabase
-      .from("settings")
-      .select("wallpaper_id, accent_hsl, theme")
-      .eq("user_id", user.id)
-      .maybeSingle();
+  const row = data as DesktopSettingsRow | null;
 
-    const row = data as DesktopSettingsRow | null;
-
-    if (!error && row) {
-      settings = {
-        wallpaperId: row.wallpaper_id ?? defaultSettings.wallpaperId,
-        accent: row.accent_hsl ?? defaultSettings.accent,
-        theme: (row.theme as ThemeMode) ?? defaultSettings.theme,
-      };
-    }
-  } else {
-    const { data, error } = await supabase
-      .from("desktop_defaults")
-      .select("wallpaper_id, accent_hsl, theme")
-      .maybeSingle();
-
-    const row = data as DesktopSettingsRow | null;
-
-    if (!error && row) {
-      settings = {
-        wallpaperId: row.wallpaper_id ?? defaultSettings.wallpaperId,
-        accent: row.accent_hsl ?? defaultSettings.accent,
-        theme: (row.theme as ThemeMode) ?? defaultSettings.theme,
-      };
-    }
+  if (!error && row) {
+    settings = {
+      wallpaperId: row.wallpaper_id ?? defaultSettings.wallpaperId,
+      accent: row.system_color ?? defaultSettings.accent,
+      theme: (row.theme as ThemeMode) ?? defaultSettings.theme,
+    };
   }
 
-  return NextResponse.json({ settings });
+  return NextResponse.json({ settings, wallpapers });
 }

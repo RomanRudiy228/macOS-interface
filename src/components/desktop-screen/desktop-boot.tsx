@@ -2,13 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ScreenLoader } from "@/components/desktop-screen/screen-loader";
-import {
-  defaultWallpaperId,
-  wallpapers,
-} from "@/shared/data/wallpapers";
 import { DesktopScreen } from "@/components/desktop-screen/desktop-screen";
 
 type ThemeMode = "light" | "dark";
+
+type Wallpaper = {
+  id: string;
+  name: string;
+  backgroundImage: string;
+};
 
 type DesktopSettings = {
   wallpaperId: string;
@@ -16,26 +18,50 @@ type DesktopSettings = {
   theme: ThemeMode;
 };
 
-const defaultSettings: DesktopSettings = {
-  wallpaperId: defaultWallpaperId,
+const fallbackWallpapers: Wallpaper[] = [
+  {
+    id: "sierra-dusk",
+    name: "Sierra Dusk",
+    backgroundImage:
+      "linear-gradient(140deg, #0f172a 0%, #1e293b 35%, #0f766e 70%, #22c55e 100%)",
+  },
+];
+
+const getDefaultWallpaperId = (items: Wallpaper[]) =>
+  items[0]?.id ?? "sierra-dusk";
+
+const defaultSettingsFor = (items: Wallpaper[]): DesktopSettings => ({
+  wallpaperId: getDefaultWallpaperId(items),
   accent: "214 92% 56%",
   theme: "dark",
-};
-
-const hasWallpaper = (wallpaperId: string) =>
-  wallpapers.some((item) => item.id === wallpaperId);
-
-const normalizeSettings = (settings?: Partial<DesktopSettings>) => ({
-  wallpaperId:
-    settings?.wallpaperId && hasWallpaper(settings.wallpaperId)
-      ? settings.wallpaperId
-      : defaultSettings.wallpaperId,
-  accent: settings?.accent ?? defaultSettings.accent,
-  theme: settings?.theme ?? defaultSettings.theme,
 });
+
+const normalizeWallpapers = (items?: Wallpaper[]) =>
+  Array.isArray(items) && items.length > 0 ? items : fallbackWallpapers;
+
+const hasWallpaper = (wallpaperId: string, items: Wallpaper[]) =>
+  items.some((item) => item.id === wallpaperId);
+
+const normalizeSettings = (
+  settings: Partial<DesktopSettings> | undefined,
+  items: Wallpaper[]
+) => {
+  const defaults = defaultSettingsFor(items);
+  return {
+    wallpaperId:
+      settings?.wallpaperId && hasWallpaper(settings.wallpaperId, items)
+        ? settings.wallpaperId
+        : defaults.wallpaperId,
+    accent: settings?.accent ?? defaults.accent,
+    theme: settings?.theme ?? defaults.theme,
+  };
+};
 
 export function DesktopBoot() {
   const [settings, setSettings] = useState<DesktopSettings | null>(null);
+  const [wallpapers, setWallpapers] = useState<Wallpaper[]>(
+    fallbackWallpapers
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,10 +72,13 @@ export function DesktopBoot() {
         const response = await fetch("/api/settings", { cache: "no-store" });
         const payload = await response.json();
         if (!active) return;
-        setSettings(normalizeSettings(payload?.settings));
+        const nextWallpapers = normalizeWallpapers(payload?.wallpapers);
+        setWallpapers(nextWallpapers);
+        setSettings(normalizeSettings(payload?.settings, nextWallpapers));
       } catch {
         if (!active) return;
-        setSettings(defaultSettings);
+        setWallpapers(fallbackWallpapers);
+        setSettings(defaultSettingsFor(fallbackWallpapers));
       } finally {
         if (active) {
           setIsLoading(false);
@@ -73,8 +102,8 @@ export function DesktopBoot() {
   }, [settings]);
 
   const wallpaperId = useMemo(
-    () => settings?.wallpaperId ?? defaultSettings.wallpaperId,
-    [settings?.wallpaperId]
+    () => settings?.wallpaperId ?? getDefaultWallpaperId(wallpapers),
+    [settings?.wallpaperId, wallpapers]
   );
 
   if (isLoading) {
@@ -84,6 +113,7 @@ export function DesktopBoot() {
   return (
     <DesktopScreen
       wallpaperId={wallpaperId}
+      wallpapers={wallpapers}
     />
   );
 }
