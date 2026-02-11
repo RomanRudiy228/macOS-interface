@@ -3,12 +3,14 @@
 import React from "react";
 import { AppWindow } from "@/components/windows-layer/app-window";
 import { WallpapersWindow } from "@/components/windows-layer/wallpapers-window";
+import { LaunchpadWindow } from "@/components/windows-layer/launchpad-window";
 import { useWindows } from "@/contexts";
 
 const WINDOW_CONTENT: Record<
   string,
   React.ReactNode
 > = {
+  settings: <WallpapersWindow />,
   wallpapers: <WallpapersWindow />,
 };
 
@@ -25,18 +27,31 @@ export const WindowsLayer: React.FC = () => {
     <>
       {openWindows
         .filter((w) => !w.isMinimized)
-        .map((w) => (
-          <AppWindow
-            key={w.id}
-            title={w.title}
-            isActive={activeWindowId === w.id}
-            onFocus={() => setActiveWindow(w.id)}
-            onClose={() => closeWindow(w.id)}
-            onMinimize={() => minimizeWindow(w.id)}
-          >
-            {WINDOW_CONTENT[w.id]}
-          </AppWindow>
-        ))}
+        .map((w) => {
+          if (w.id === "launchpad") {
+            return (
+              <LaunchpadWindow
+                key={w.id}
+                isActive={activeWindowId === w.id}
+                onFocus={() => setActiveWindow(w.id)}
+                onDismiss={() => minimizeWindow(w.id)}
+              />
+            );
+          }
+
+          return (
+            <AppWindow
+              key={w.id}
+              title={w.title}
+              isActive={activeWindowId === w.id}
+              onFocus={() => setActiveWindow(w.id)}
+              onClose={() => closeWindow(w.id)}
+              onMinimize={() => minimizeWindow(w.id)}
+            >
+              {WINDOW_CONTENT[w.id]}
+            </AppWindow>
+          );
+        })}
     </>
   );
 };

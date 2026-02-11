@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { reorderDockItems, removeFromDock } from "@/actions";
+import { addToDock, reorderDockItems, removeFromDock } from "@/actions";
+import { APP_CATALOG } from "@/const";
 import type { DockItemView } from "@/types";
 
 export function useDockItems(initialItems: DockItemView[]) {
@@ -39,5 +40,22 @@ export function useDockItems(initialItems: DockItemView[]) {
     await reorderDockItems(newMain.map((i) => i.id));
   };
 
-  return { items, mainItems, binItem, setItems, handleDragEnd };
+  const addItemToDock = async (appKey: string) => {
+    if (appKey === "bin" || appKey === "launchpad") return;
+    if (!APP_CATALOG[appKey]) return;
+    if (items.some((item) => item.appKey === appKey)) return;
+
+    const addedItem = await addToDock(appKey);
+    if (!addedItem) return;
+
+    setItems((prev) => {
+      if (prev.some((item) => item.appKey === appKey)) return prev;
+
+      const currentBin = prev[prev.length - 1];
+      const main = prev.slice(0, -1);
+      return [...main, addedItem, currentBin];
+    });
+  };
+
+  return { items, mainItems, binItem, setItems, handleDragEnd, addItemToDock };
 }

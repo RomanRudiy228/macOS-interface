@@ -24,6 +24,7 @@ export async function getDockItems(): Promise<DockItemView[]> {
       if (!app) continue;
       items.push({
         id: row.id,
+        appKey: row.app_key,
         name: app.name,
         src: app.src,
         isLocked: row.is_locked ?? false,
@@ -41,6 +42,7 @@ function getFallbackDockItems(): DockItemView[] {
     const app = APP_CATALOG[appKey];
     return {
       id: `fallback-${index}-${appKey}`,
+      appKey,
       name: app.name,
       src: app.src,
       isLocked: false,
