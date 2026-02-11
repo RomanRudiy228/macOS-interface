@@ -4,6 +4,16 @@ import React, { useState, useEffect } from "react";
 import { Wifi, Search } from "lucide-react";
 import { formatMacOSTime } from "@/utils/date";
 import { ControlCenter } from "@/components/control-center/control-center";
+import { MenuBarItem } from "@/components/context-menu/context-menu";
+import {
+  finderMenuItems,
+  fileMenuItems,
+  editMenuItems,
+  viewMenuItems,
+  goMenuItems,
+  windowMenuItems,
+  helpMenuItems,
+} from "@/const/context-const";
 
 export const Menubar = () => {
   const [date, setDate] = useState<Date | null>(null);
@@ -27,25 +37,71 @@ export const Menubar = () => {
       "
     >
       <div className="flex items-center gap-4">
+        {/* Apple Icon */}
         <button className="hover:opacity-70 transition-opacity pb-0.5">
           <svg width="18" height="18" viewBox="0 0 384 512" fill="currentColor">
             <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z" />
           </svg>
         </button>
 
-        <button className="font-bold cursor-default hover:bg-black/5 dark:hover:bg-white/10 px-2 py-0.5 rounded transition-colors">
+        {/* Finder with Context Menu */}
+        <MenuBarItem
+          label="Finder"
+          items={finderMenuItems}
+          className="font-bold text-black dark:text-white cursor-default hover:bg-black/5 dark:hover:bg-white/10 px-2 py-0.5 rounded transition-colors"
+        >
           Finder
-        </button>
+        </MenuBarItem>
 
-        <nav className="hidden md:flex gap-1 opacity-90">
-          {["File", "Edit", "View", "Go", "Window", "Help"].map((item) => (
-            <button
-              key={item}
-              className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
-            >
-              {item}
-            </button>
-          ))}
+        {/* Navigation Menu Items */}
+        <nav className="hidden md:flex gap-1 font-medium opacity-90">
+          <MenuBarItem
+            label="File"
+            items={fileMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            File
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Edit"
+            items={editMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Edit
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="View"
+            items={viewMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            View
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Go"
+            items={goMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Go
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Window"
+            items={windowMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Window
+          </MenuBarItem>
+
+          <MenuBarItem
+            label="Help"
+            items={helpMenuItems}
+            className="hover:bg-black/5 dark:hover:bg-white/10 px-3 py-0.5 rounded transition-colors cursor-default"
+          >
+            Help
+          </MenuBarItem>
         </nav>
       </div>
 
@@ -54,6 +110,7 @@ export const Menubar = () => {
           <Search size={16} strokeWidth={2.5} />
           <Wifi size={18} strokeWidth={2.5} />
 
+          {/* Battery Icon */}
           <div>
             <svg
               width="24"
