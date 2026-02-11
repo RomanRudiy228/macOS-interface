@@ -1,4 +1,4 @@
-import { SystemColor } from "@/typings/types";
+import { SystemColor } from "@/types/types";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

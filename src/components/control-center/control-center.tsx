@@ -1,6 +1,8 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useSystemSettings } from "@/hooks/use-system-settings";
+import { useWallpaper } from "@/contexts";
+import { useWindows } from "@/contexts";
 import { Check } from "lucide-react";
 import {
   Popover,
@@ -9,15 +11,26 @@ import {
 } from "@/components/popover/popover";
 import { cn } from "@/utils/theme-utilis";
 
+const WALLPAPERS_WINDOW_ID = "wallpapers";
+const WALLPAPERS_WINDOW_TITLE = "Wallpapers";
+
 export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
   const { theme, activeColor, colors, isLoading, toggleTheme, changeColor } =
     useSystemSettings();
+  const { selectedWallpaper } = useWallpaper();
+  const { openWindow } = useWindows();
+  const [open, setOpen] = useState(false);
 
   const isDarkMode = theme === "dark";
   const loadingCircles = [1, 2, 3, 4, 5, 6, 7];
 
+  const handleOpenWallpapers = () => {
+    openWindow(WALLPAPERS_WINDOW_ID, WALLPAPERS_WINDOW_TITLE);
+    setOpen(false);
+  };
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
 
       <PopoverContent
@@ -119,22 +132,29 @@ export const ControlCenter = ({ children }: { children: React.ReactNode }) => {
           </div>
 
           <button
+            type="button"
+            onClick={handleOpenWallpapers}
             className={cn(
               "group flex items-center gap-4 p-3 h-[72px] rounded-[18px] transition-all w-full text-left",
               "bg-white/50 dark:bg-gray-600/40 border border-white/40 dark:border-gray-500/30 shadow-sm",
               "hover:bg-white/80 dark:hover:bg-gray-600/60 active:scale-[0.98]"
             )}
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 shadow-sm border border-black/5 dark:border-white/10 bg-gray-300">
-              <div className="w-full h-full bg-blue-500/20 animate-pulse" />
-            </div>
+            <div
+              className="w-12 h-12 rounded-xl overflow-hidden shrink-0 shadow-sm bg-gray-300"
+              style={{
+                backgroundImage: selectedWallpaper?.backgroundImage,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
 
-            <div className="flex flex-col justify-center">
+            <div className="flex flex-col justify-center min-w-0">
               <span className="text-[14px] font-semibold text-slate-800 dark:text-white leading-tight">
                 Wallpaper
               </span>
-              <span className="text-[12px] text-slate-500 dark:text-slate-300 leading-tight opacity-80 mt-0.5">
-                Dynamic Wallpaper
+              <span className="text-[12px] text-slate-500 dark:text-slate-300 leading-tight opacity-80 mt-0.5 truncate">
+                {selectedWallpaper?.name ?? "Dynamic Wallpaper"}
               </span>
             </div>
           </button>
