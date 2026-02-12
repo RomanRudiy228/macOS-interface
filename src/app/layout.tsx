@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
-import { ThemeProvider } from "@/provider/theme-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { getWallpapers } from "@/actions/wallpapers-get";
 import { getSettings } from "@/actions/settings-get";
 import { WindowsProvider, WallpaperProvider } from "@/contexts";
@@ -20,7 +20,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Весь код отримання даних та return має бути всередині цієї функції
   const [wallpapers, settings] = await Promise.all([
     getWallpapers(),
     getSettings(),
