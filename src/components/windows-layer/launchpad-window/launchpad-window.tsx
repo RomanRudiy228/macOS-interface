@@ -3,9 +3,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
-import { APP_CATALOG } from "@/const";
+import { APP_CATALOGS } from "@/const";
 
-const LAUNCHPAD_APPS = Object.entries(APP_CATALOG)
+const LAUNCHPAD_APPS = Object.entries(APP_CATALOGS)
   .filter(([appKey]) => appKey !== "launchpad" && appKey !== "bin")
   .map(([appKey, app]) => ({
     id: appKey,

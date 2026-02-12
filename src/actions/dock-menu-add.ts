@@ -2,11 +2,13 @@
 
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import { APP_CATALOG } from "@/const";
+// import { APP_CATALOG } from "@/const";
+import { APP_CATALOGS } from "@/const";
 import type { DockItemView } from "@/types";
 
 export async function addToDock(appKey: string): Promise<DockItemView | null> {
-  const app = APP_CATALOG[appKey];
+  // const app = APP_CATALOG[appKey];
+    const app = APP_CATALOGS[appKey];
   if (!app || appKey === "bin") return null;
 
   try {

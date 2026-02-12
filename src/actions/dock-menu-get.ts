@@ -2,7 +2,8 @@
 
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@/const";
+// import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@/const";
+import { APP_CATALOGS, DEFAULT_DOCK_ORDER } from "@/const";
 import type { DockItemView } from "@/types";
 
 export async function getDockItems(): Promise<DockItemView[]> {
@@ -28,7 +29,8 @@ export async function getDockItems(): Promise<DockItemView[]> {
 
     const items: DockItemView[] = [];
     for (const row of data) {
-      const app = APP_CATALOG[row.app_key];
+      // const app = APP_CATALOG[row.app_key];
+      const app = APP_CATALOGS[row.app_key];
       if (!app) continue;
       items.push({
         id: row.id,
@@ -47,7 +49,8 @@ export async function getDockItems(): Promise<DockItemView[]> {
 
 function getFallbackDockItems(): DockItemView[] {
   return DEFAULT_DOCK_ORDER.map((appKey, index) => {
-    const app = APP_CATALOG[appKey];
+    // const app = APP_CATALOG[appKey];
+    const app = APP_CATALOGS[appKey];
     return {
       id: `fallback-${index}-${appKey}`,
       appKey,
