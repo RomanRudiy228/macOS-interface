@@ -3,39 +3,45 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
-import { APP_CATALOGS } from "@/const";
 
-const LAUNCHPAD_APPS = Object.entries(APP_CATALOGS)
-  .filter(([appKey]) => appKey !== "launchpad" && appKey !== "bin")
-  .map(([appKey, app]) => ({
-    id: appKey,
-    name: app.name,
-    src: app.src,
-  }));
+export type LaunchpadApp = {
+  id: string;
+  name: string;
+  src: string;
+};
 
 type LaunchpadWindowProps = {
   isActive: boolean;
   onFocus: () => void;
   onDismiss: () => void;
+  apps: LaunchpadApp[];
 };
 
 export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
   isActive,
   onFocus,
   onDismiss,
+  apps,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Filter out launchpad and bin from the apps list
+  const launchpadApps = useMemo(
+    () =>
+      apps.filter((app) => app.id !== "launchpad" && app.id !== "bin"),
+    [apps]
+  );
+
   const filteredApps = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    if (!query) return LAUNCHPAD_APPS;
+    if (!query) return launchpadApps;
 
-    return LAUNCHPAD_APPS.filter(
+    return launchpadApps.filter(
       (app) =>
         app.name.toLowerCase().includes(query) ||
         app.id.toLowerCase().includes(query)
     );
-  }, [searchQuery]);
+  }, [searchQuery, launchpadApps]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

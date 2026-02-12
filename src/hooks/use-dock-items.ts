@@ -4,20 +4,19 @@ import { useEffect, useState } from "react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { addToDock, reorderDockItems, removeFromDock } from "@/actions";
-// import { APP_CATALOG } from "@/const";
-import { APP_CATALOGS } from "@/const";
 import type { DockItemView } from "@/types";
+import type { AppCatalog } from "@/actions/apps-get";
 
 const LOCAL_DOCK_ITEMS_KEY = "macos-interface:dock-items";
 
 function buildDockItemsFromKeys(
   appKeys: string[],
-  baseItems: DockItemView[]
+  baseItems: DockItemView[],
+  availableApps: Record<string, AppCatalog>
 ): DockItemView[] {
   const uniqueValidKeys = Array.from(
     new Set(
-      // appKeys.filter((appKey) => APP_CATALOG[appKey] && appKey !== "bin")
-      appKeys.filter((appKey) => APP_CATALOGS[appKey] && appKey !== "bin")
+      appKeys.filter((appKey) => availableApps[appKey] && appKey !== "bin")
     )
   );
 
@@ -27,8 +26,7 @@ function buildDockItemsFromKeys(
     const existing = baseByAppKey.get(appKey);
     if (existing) return existing;
 
-    // const app = APP_CATALOG[appKey];
-        const app = APP_CATALOGS[appKey];
+    const app = availableApps[appKey];
     return {
       id: `local-${appKey}`,
       appKey,
@@ -41,8 +39,7 @@ function buildDockItemsFromKeys(
   const binItem = baseByAppKey.get("bin");
   if (binItem) return [...mainItems, binItem];
 
-  // const binApp = APP_CATALOG.bin;
-    const binApp = APP_CATALOGS.bin;
+  const binApp = availableApps.bin;
   return [
     ...mainItems,
     {
@@ -55,7 +52,10 @@ function buildDockItemsFromKeys(
   ];
 }
 
-export function useDockItems(initialItems: DockItemView[]) {
+export function useDockItems(
+  initialItems: DockItemView[],
+  availableApps: Record<string, AppCatalog> = {}
+) {
   const [items, setItems] = useState<DockItemView[]>(initialItems);
 
   useEffect(() => {
@@ -66,11 +66,11 @@ export function useDockItems(initialItems: DockItemView[]) {
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) return;
 
-      setItems(buildDockItemsFromKeys(parsed, initialItems));
+      setItems(buildDockItemsFromKeys(parsed, initialItems, availableApps));
     } catch {
       // Ignore local storage errors and keep server-backed items.
     }
-  }, [initialItems]);
+  }, [initialItems, availableApps]);
 
   useEffect(() => {
     try {
@@ -113,8 +113,7 @@ export function useDockItems(initialItems: DockItemView[]) {
 
   const addItemToDock = async (appKey: string) => {
     if (appKey === "bin" || appKey === "launchpad") return;
-    // if (!APP_CATALOG[appKey]) return;
-        if (!APP_CATALOGS[appKey]) return;
+    if (!availableApps[appKey]) return;
     if (items.some((item) => item.appKey === appKey)) return;
 
     const addedItem = await addToDock(appKey);
