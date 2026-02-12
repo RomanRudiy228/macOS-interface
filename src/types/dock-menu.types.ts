@@ -1,5 +1,6 @@
 export type DockItemView = {
   id: string;
+  appKey: string;
   name: string;
   src: string;
   isLocked: boolean;
