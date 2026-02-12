@@ -71,14 +71,14 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
           <label className="relative block">
             <Search
               size={16}
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/65"
+              className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-white/80"
             />
             <input
               type="search"
               placeholder="Search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              className="launchpad-search-input h-11 w-full rounded-xl border border-white/30 bg-black/25 pl-10 pr-10 text-sm font-semibold text-white caret-white outline-none backdrop-blur-xl placeholder:text-white/75 focus:border-white/55 focus:ring-2 focus:ring-white/25"
+              className="launchpad-search-input h-11 w-full rounded-xl border border-white/30 bg-black/25 pl-10 pr-10 text-sm font-semibold text-white caret-white outline-none backdrop-blur-xl placeholder:text-center placeholder:text-white/75 focus:border-white/55 focus:ring-2 focus:ring-white/25"
               aria-label="Search apps"
             />
           </label>
