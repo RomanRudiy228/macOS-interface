@@ -3,7 +3,12 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   darkMode: ["class"],
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -55,6 +60,24 @@ const config: Config = {
       },
     },
   },
+
+  safelist: [
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-red-500",
+    "bg-orange-500",
+    "bg-green-500",
+    "bg-yellow-400",
+
+    "ring-blue-500",
+    "ring-purple-500",
+    "ring-pink-500",
+    "ring-red-500",
+    "ring-orange-500",
+    "ring-green-500",
+    "ring-yellow-400",
+  ],
   plugins: [tailwindcssAnimate],
 };
 

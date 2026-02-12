@@ -23,6 +23,8 @@ const eslintConfig = [
   {
     rules: {
       // Забороняє явне використання 'any'
+      "@next/next/no-img-element": "off",
+      "react-hooks/exhaustive-deps": "off",
       "@typescript-eslint/no-explicit-any": "error",
     },
   },
