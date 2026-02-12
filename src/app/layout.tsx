@@ -20,7 +20,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Весь код отримання даних та return має бути всередині цієї функції
   const [wallpapers, settings] = await Promise.all([
     getWallpapers(),
     getSettings(),
