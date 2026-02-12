@@ -1,3 +1,5 @@
+// Fallback app catalog - used for client-side components
+// For server-side, use getApps() from @/actions/apps-get instead
 export const APP_CATALOGS: Record<string, { name: string; src: string }> = {
   finder: { name: "Finder", src: "/images/finder.webp" },
   safari: { name: "Safari", src: "/images/safari.webp" },

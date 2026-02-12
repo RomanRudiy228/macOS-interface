@@ -5,3 +5,4 @@ export * from "./dock-menu-remove";
 export * from "./wallpapers-get";
 export * from "./settings-get";
 export * from "./settings-set-wallpaper";
+export * from "./apps-get";
