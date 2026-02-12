@@ -12,13 +12,18 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
   try {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
-
-    const { data: existing } = await supabase
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const existingQuery = supabase
       .from("dock_items")
       .select("id, app_key, is_locked")
       .eq("app_key", appKey)
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
+    const { data: existing } = await (user
+      ? existingQuery.eq("user_id", user.id)
+      : existingQuery.is("user_id", null)
+    ).maybeSingle();
 
     if (existing) {
       return {
@@ -30,21 +35,28 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
       };
     }
 
-    const { data: binItem } = await supabase
+    const binQuery = supabase
       .from("dock_items")
       .select("id, position")
       .eq("app_key", "bin")
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
+    const { data: binItem } = await (user
+      ? binQuery.eq("user_id", user.id)
+      : binQuery.is("user_id", null)
+    ).maybeSingle();
 
     let insertPosition = 1;
 
     if (binItem) {
-      const { data: rowsToShift } = await supabase
+      const rowsToShiftQuery = supabase
         .from("dock_items")
         .select("id, position")
         .gte("position", binItem.position)
         .order("position", { ascending: false });
+      const { data: rowsToShift } = await (user
+        ? rowsToShiftQuery.eq("user_id", user.id)
+        : rowsToShiftQuery.is("user_id", null)
+      );
 
       for (const row of rowsToShift ?? []) {
         await supabase
@@ -55,12 +67,15 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
 
       insertPosition = binItem.position;
     } else {
-      const { data: lastItem } = await supabase
+      const lastItemQuery = supabase
         .from("dock_items")
         .select("position")
         .order("position", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      const { data: lastItem } = await (user
+        ? lastItemQuery.eq("user_id", user.id)
+        : lastItemQuery.is("user_id", null)
+      ).maybeSingle();
 
       insertPosition = (lastItem?.position ?? 0) + 1;
     }
@@ -71,6 +86,7 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
         app_key: appKey,
         is_locked: false,
         position: insertPosition,
+        user_id: user?.id ?? null,
       })
       .select("id, app_key, is_locked")
       .single();

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { APP_CATALOG } from "@/const";
@@ -24,16 +24,34 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
   onFocus,
   onDismiss,
 }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredApps = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return LAUNCHPAD_APPS;
+
+    return LAUNCHPAD_APPS.filter(
+      (app) =>
+        app.name.toLowerCase().includes(query) ||
+        app.id.toLowerCase().includes(query)
+    );
+  }, [searchQuery]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        if (searchQuery) {
+          setSearchQuery("");
+          return;
+        }
+
         onDismiss();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onDismiss]);
+  }, [onDismiss, searchQuery]);
 
   return (
     <section
@@ -45,7 +63,10 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(236,244,255,0.42),_rgba(120,140,170,0.35)_35%,_rgba(30,37,52,0.5)_95%)] backdrop-blur-[28px]" />
 
-      <div className="relative mx-auto flex h-full w-full max-w-[1160px] flex-col px-5 pb-28 pt-12 sm:px-8 sm:pt-14">
+      <div
+        className="relative mx-auto flex h-full w-full max-w-[1160px] flex-col px-5 pb-28 pt-12 sm:px-8 sm:pt-14"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
         <div className="mx-auto mb-10 w-full max-w-md">
           <label className="relative block">
             <Search
@@ -55,8 +76,9 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
             <input
               type="search"
               placeholder="Search"
-              className="h-11 w-full rounded-xl border border-white/20 bg-black/18 pl-10 pr-4 text-sm font-medium text-white/90 outline-none backdrop-blur-xl placeholder:text-white/55 focus:border-white/40 focus:ring-2 focus:ring-white/20"
-              readOnly
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="launchpad-search-input h-11 w-full rounded-xl border border-white/30 bg-black/25 pl-10 pr-10 text-sm font-semibold text-white caret-white outline-none backdrop-blur-xl placeholder:text-white/75 focus:border-white/55 focus:ring-2 focus:ring-white/25"
               aria-label="Search apps"
             />
           </label>
@@ -67,7 +89,7 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
           onMouseDown={(event) => event.stopPropagation()}
         >
           <ul className="mx-auto grid max-w-[1040px] grid-cols-4 gap-x-8 gap-y-8 pb-6 sm:grid-cols-5 lg:grid-cols-6">
-            {LAUNCHPAD_APPS.map((app, index) => (
+            {filteredApps.map((app, index) => (
               <li
                 key={app.id}
                 className="launchpad-app-item"
@@ -107,6 +129,11 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
               </li>
             ))}
           </ul>
+          {!filteredApps.length && (
+            <p className="mt-16 text-center text-sm font-medium text-white/75">
+              No apps found for &quot;{searchQuery.trim()}&quot;.
+            </p>
+          )}
         </div>
 
         <div className="pointer-events-none mt-6 flex items-center justify-center gap-2">

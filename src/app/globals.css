@@ -102,6 +102,24 @@
     transform: translateY(12px) scale(0.98);
     animation: launchpad-icon-enter 280ms cubic-bezier(0.22, 0.8, 0.2, 1) forwards;
   }
+
+  .launchpad-search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    opacity: 0.95;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.9);
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='black' d='M4.22 4.22a.75.75 0 011.06 0L8 6.94l2.72-2.72a.75.75 0 111.06 1.06L9.06 8l2.72 2.72a.75.75 0 11-1.06 1.06L8 9.06l-2.72 2.72a.75.75 0 11-1.06-1.06L6.94 8 4.22 5.28a.75.75 0 010-1.06z'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  .launchpad-search-input::-webkit-search-cancel-button:hover {
+    background-color: rgba(255, 255, 255, 1);
+  }
 }
 
 @keyframes launchpad-enter {
