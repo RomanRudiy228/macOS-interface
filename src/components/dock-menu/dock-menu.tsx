@@ -15,12 +15,17 @@ import {
 import { SortableDockItem } from "@/components/dock-menu/dock-item";
 import { useWindows } from "@/contexts";
 import { useDockItems } from "@/hooks";
+import { getApps } from "@/actions";
 import type { DockMenuProps } from "@/types";
+import type { AppCatalog } from "@/actions/apps-get";
 
 export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   const [mounted, setMounted] = useState(false);
+  const [availableApps, setAvailableApps] = useState<
+    Record<string, AppCatalog>
+  >({});
   const { items, mainItems, binItem, handleDragEnd, addItemToDock } =
-    useDockItems(initialItems);
+    useDockItems(initialItems, availableApps);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isDropTarget, setIsDropTarget] = useState(false);
@@ -36,6 +41,15 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   const isLaunchpadVisible = isOpen("launchpad") && !isMinimized("launchpad");
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const loadApps = async () => {
+      const apps = await getApps();
+      setAvailableApps(apps);
+    };
+
+    loadApps();
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

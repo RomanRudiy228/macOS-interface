@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppWindow } from "@/components/windows-layer/app-window";
 import { WallpapersWindow } from "@/components/windows-layer/wallpapers-window";
 import { LaunchpadWindow } from "@/components/windows-layer/launchpad-window";
 import { useWindows } from "@/contexts";
+import { getApps } from "@/actions";
+import type { LaunchpadApp } from "@/components/windows-layer/launchpad-window/launchpad-window";
 
 const WINDOW_CONTENT: Record<
   string,
@@ -23,6 +25,24 @@ export const WindowsLayer: React.FC = () => {
     setActiveWindow,
   } = useWindows();
 
+  const [launchpadApps, setLaunchpadApps] = useState<LaunchpadApp[]>([]);
+
+  useEffect(() => {
+    const loadApps = async () => {
+      const apps = await getApps();
+      const appsList: LaunchpadApp[] = Object.entries(apps).map(
+        ([key, app]) => ({
+          id: key,
+          name: app.name,
+          src: app.src,
+        })
+      );
+      setLaunchpadApps(appsList);
+    };
+
+    loadApps();
+  }, []);
+
   return (
     <>
       {openWindows
@@ -35,6 +55,7 @@ export const WindowsLayer: React.FC = () => {
                 isActive={activeWindowId === w.id}
                 onFocus={() => setActiveWindow(w.id)}
                 onDismiss={() => minimizeWindow(w.id)}
+                apps={launchpadApps}
               />
             );
           }

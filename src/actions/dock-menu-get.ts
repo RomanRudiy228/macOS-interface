@@ -2,7 +2,8 @@
 
 import { cookies } from "next/headers";
 import { createClient } from "@/supabase/server";
-import { APP_CATALOG, DEFAULT_DOCK_ORDER } from "@/const";
+import { DEFAULT_DOCK_ORDER } from "@/const";
+import { getApps } from "./apps-get";
 import type { DockItemView } from "@/types";
 
 export async function getDockItems(): Promise<DockItemView[]> {
@@ -26,9 +27,10 @@ export async function getDockItems(): Promise<DockItemView[]> {
       return getFallbackDockItems();
     }
 
+    const apps = await getApps();
     const items: DockItemView[] = [];
     for (const row of data) {
-      const app = APP_CATALOG[row.app_key];
+      const app = apps[row.app_key];
       if (!app) continue;
       items.push({
         id: row.id,
@@ -45,15 +47,19 @@ export async function getDockItems(): Promise<DockItemView[]> {
   }
 }
 
-function getFallbackDockItems(): DockItemView[] {
-  return DEFAULT_DOCK_ORDER.map((appKey, index) => {
-    const app = APP_CATALOG[appKey];
-    return {
-      id: `fallback-${index}-${appKey}`,
-      appKey,
-      name: app.name,
-      src: app.src,
-      isLocked: false,
-    };
-  });
+async function getFallbackDockItems(): Promise<DockItemView[]> {
+  const apps = await getApps();
+  return DEFAULT_DOCK_ORDER
+    .map((appKey, index) => {
+      const app = apps[appKey];
+      if (!app) return null;
+      return {
+        id: `fallback-${index}-${appKey}`,
+        appKey: appKey as string,
+        name: app.name,
+        src: app.src,
+        isLocked: false,
+      };
+    })
+    .filter((item): item is DockItemView => item !== null);
 }
