@@ -15,14 +15,20 @@ import {
 import { SortableDockItem } from "@/components/dock-menu/dock-item";
 import { useWindows } from "@/contexts";
 import { useDockItems } from "@/hooks";
+import { getApps } from "@/actions";
 import type { DockMenuProps } from "@/types";
+import type { AppCatalog } from "@/actions/apps-get";
 
 export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
   const [mounted, setMounted] = useState(false);
-  const { items, mainItems, binItem, handleDragEnd } =
-    useDockItems(initialItems);
+  const [availableApps, setAvailableApps] = useState<
+    Record<string, AppCatalog>
+  >({});
+  const { items, mainItems, binItem, handleDragEnd, addItemToDock } =
+    useDockItems(initialItems, availableApps);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isDropTarget, setIsDropTarget] = useState(false);
   const effectiveHoveredIndex = isDragging ? null : hoveredIndex;
   const {
     openWindow,
@@ -32,8 +38,18 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
     minimizeWindow,
     isMinimized,
   } = useWindows();
+  const isLaunchpadVisible = isOpen("launchpad") && !isMinimized("launchpad");
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const loadApps = async () => {
+      const apps = await getApps();
+      setAvailableApps(apps);
+    };
+
+    loadApps();
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -41,24 +57,43 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
     })
   );
 
-  const handleOpenApp = (itemId: string, itemName: string) => {
-    if (!isOpen(itemId)) {
-      return openWindow(itemId, itemName);
+  const handleOpenApp = (windowId: string, itemName: string) => {
+    if (!isOpen(windowId)) {
+      return openWindow(windowId, itemName);
     }
 
-    if (isMinimized(itemId)) {
-      return restoreWindow(itemId);
+    if (isMinimized(windowId)) {
+      return restoreWindow(windowId);
     }
 
-    return minimizeWindow(itemId);
+    return minimizeWindow(windowId);
   };
 
   if (!mounted) return null;
 
+  const handleDockDrop = async (event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    setIsDropTarget(false);
+
+    const appKey =
+      event.dataTransfer.getData("application/x-macos-app-key") ||
+      event.dataTransfer.getData("text/plain");
+
+    if (!appKey) return;
+    await addItemToDock(appKey);
+  };
+
   return (
     <nav
-      className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 flex items-end overflow-visible gap-1 rounded-2xl border border-white/15 bg-white/10 px-1.5 py-1 shadow-sm backdrop-blur-2xl backdrop-saturate-[1.4]"
+      className={`fixed bottom-5 left-1/2 -translate-x-1/2 flex items-end overflow-visible gap-1 rounded-2xl border px-1.5 py-1 shadow-sm backdrop-blur-2xl backdrop-saturate-[1.4] transition-all duration-200 ${isLaunchpadVisible ? "z-[75] border-white/25 bg-white/20" : "z-50 border-white/15 bg-white/10"} ${isDropTarget ? "scale-[1.02] shadow-[0_12px_36px_rgba(255,255,255,0.25)]" : ""}`}
       aria-label="Dock"
+      onDragOver={(event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+        setIsDropTarget(true);
+      }}
+      onDragLeave={() => setIsDropTarget(false)}
+      onDrop={handleDockDrop}
     >
       <DndContext
         sensors={sensors}
@@ -82,9 +117,9 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
                 hoveredIndex={effectiveHoveredIndex}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                isOpen={isOpen(item.id)}
-                isActive={isActive(item.id)}
-                onOpen={() => handleOpenApp(item.id, item.name)}
+                isOpen={isOpen(item.appKey)}
+                isActive={isActive(item.appKey)}
+                onOpen={() => handleOpenApp(item.appKey, item.name)}
               />
             ))}
           </SortableContext>
@@ -103,8 +138,8 @@ export const DockMenu: React.FC<DockMenuProps> = ({ items: initialItems }) => {
             onMouseEnter={() => setHoveredIndex(items.length - 1)}
             onMouseLeave={() => setHoveredIndex(null)}
             variant="bin"
-            isOpen={isOpen(binItem.id)}
-            onOpen={() => handleOpenApp(binItem.id, binItem.name)}
+            isOpen={isOpen(binItem.appKey)}
+            onOpen={() => handleOpenApp(binItem.appKey, binItem.name)}
           />
         </ul>
       </DndContext>
