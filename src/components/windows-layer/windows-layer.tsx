@@ -54,7 +54,7 @@ export const WindowsLayer: React.FC = () => {
                 key={w.id}
                 isActive={activeWindowId === w.id}
                 onFocus={() => setActiveWindow(w.id)}
-                onDismiss={() => minimizeWindow(w.id)}
+                onDismiss={() => closeWindow(w.id)}
                 apps={launchpadApps}
               />
             );

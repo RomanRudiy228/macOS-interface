@@ -4,6 +4,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Search } from "lucide-react";
 
+const COLS = 4;
+const ROWS_PER_PAGE = 4;
+const APPS_PER_PAGE = COLS * ROWS_PER_PAGE;
+
 export type LaunchpadApp = {
   id: string;
   name: string;
@@ -24,11 +28,11 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
   apps,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Filter out launchpad and bin from the apps list
   const launchpadApps = useMemo(
-    () =>
-      apps.filter((app) => app.id !== "launchpad" && app.id !== "bin"),
+    () => apps.filter((app) => app.id !== "launchpad" && app.id !== "bin"),
     [apps]
   );
 
@@ -42,6 +46,24 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
         app.id.toLowerCase().includes(query)
     );
   }, [searchQuery, launchpadApps]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredApps.length / APPS_PER_PAGE)
+  );
+  const appsOnCurrentPage = useMemo(() => {
+    if (searchQuery.trim()) return filteredApps;
+    const start = (currentPage - 1) * APPS_PER_PAGE;
+    return filteredApps.slice(start, start + APPS_PER_PAGE);
+  }, [filteredApps, currentPage, searchQuery]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [totalPages]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -91,11 +113,11 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
         </div>
 
         <div
-          className="flex-1 overflow-y-auto overscroll-contain"
+          className="launchpad-scroll flex-1 overflow-y-auto overscroll-contain"
           onMouseDown={(event) => event.stopPropagation()}
         >
-          <ul className="mx-auto grid max-w-[1040px] grid-cols-4 gap-x-8 gap-y-8 pb-6 sm:grid-cols-5 lg:grid-cols-6">
-            {filteredApps.map((app, index) => (
+          <ul className="mx-auto grid max-w-[1040px] grid-cols-4 gap-y-2">
+            {appsOnCurrentPage.map((app, index) => (
               <li
                 key={app.id}
                 className="launchpad-app-item"
@@ -126,7 +148,7 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
                     />
                   </span>
                   <span
-                    className="max-w-full truncate text-center text-[12px] font-semibold leading-tight text-white/95"
+                    className="max-w-full truncate text-center text-[16px] font-semibold leading-tight text-white/95"
                     style={{ textShadow: "0 1px 10px rgba(0,0,0,0.45)" }}
                   >
                     {app.name}
@@ -142,10 +164,31 @@ export const LaunchpadWindow: React.FC<LaunchpadWindowProps> = ({
           )}
         </div>
 
-        <div className="pointer-events-none mt-6 flex items-center justify-center gap-2">
-          <span className="h-1.5 w-5 rounded-full bg-white/85" />
-          <span className="h-1.5 w-1.5 rounded-full bg-white/45" />
-          <span className="h-1.5 w-1.5 rounded-full bg-white/45" />
+        <div
+          className="mt-6 flex items-center justify-center gap-2"
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          {searchQuery.trim() || totalPages <= 1 ? (
+            <span
+              className="h-1.5 w-1.5 rounded-full bg-white/45"
+              aria-hidden
+            />
+          ) : (
+            Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Page ${i + 1} of ${totalPages}`}
+                aria-current={currentPage === i + 1 ? "true" : undefined}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`rounded-full transition-colors hover:bg-white/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
+                  currentPage === i + 1
+                    ? "h-1.5 w-5 bg-white/85"
+                    : "h-1.5 w-1.5 bg-white/45"
+                }`}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>
