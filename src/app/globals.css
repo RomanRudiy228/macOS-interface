@@ -129,8 +129,15 @@
   }
 
   .launchpad-overlay {
-    font-family: "SF Pro Display", "Helvetica Neue", "Segoe UI", sans-serif;
     animation: launchpad-enter 220ms cubic-bezier(0.2, 0.65, 0.15, 1);
+  }
+
+  .launchpad-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .launchpad-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .launchpad-app-item {
