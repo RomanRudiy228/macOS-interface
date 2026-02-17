@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/supabase/client";
-import { SystemColor, Settings } from "@/types/types";
+import { SystemColor } from "@/types/types";
 import { applySystemTheme } from "@/utils/theme-utilis";
 
 const STATIC_COLORS: SystemColor[] = [
