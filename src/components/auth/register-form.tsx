@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextInput } from "@/components/input";
-import { AuthSubmitButton } from "@/components/button";
 import { registerSchema, type RegisterValues } from "@/schemas";
 import { useRegisterSubmit } from "@/hooks/use-register-submit";
 
@@ -27,6 +28,19 @@ export const RegisterForm = () => {
   });
 
   const selectedAvatar = watch("avatar");
+  const avatarPreviewUrl = useMemo(
+    () => (selectedAvatar instanceof File ? URL.createObjectURL(selectedAvatar) : null),
+    [selectedAvatar]
+  );
+
+  useEffect(
+    () => () => {
+      if (avatarPreviewUrl) {
+        URL.revokeObjectURL(avatarPreviewUrl);
+      }
+    },
+    [avatarPreviewUrl]
+  );
 
   return (
     <form
@@ -37,9 +51,19 @@ export const RegisterForm = () => {
       <div className="flex justify-center mb-4">
         <label
           htmlFor="register-avatar"
-          className="grid h-16 w-16 cursor-pointer place-items-center rounded-full border border-white/35 bg-white/20 text-3xl font-light leading-none text-white/90 transition hover:bg-white/30"
+          className="relative grid h-16 w-16 cursor-pointer place-items-center overflow-hidden rounded-full border border-white/35 bg-white/20 text-3xl font-light leading-none text-white/90 transition hover:bg-white/30"
         >
-          <span className="-mt-[4px]">+</span>
+          {avatarPreviewUrl ? (
+            <Image
+              src={avatarPreviewUrl}
+              alt="Avatar preview"
+              fill
+              sizes="64px"
+              className="object-cover"
+            />
+          ) : (
+            <span className="-mt-[4px]">+</span>
+          )}
         </label>
         <input
           id="register-avatar"
@@ -52,9 +76,6 @@ export const RegisterForm = () => {
           }}
         />
       </div>
-      {selectedAvatar instanceof File ? (
-        <p className="text-center text-[11px] text-white/80">{selectedAvatar.name}</p>
-      ) : null}
       {errors.avatar ? (
         <p className="text-center text-[11px]">
           {errors.avatar.message as string}
@@ -106,12 +127,7 @@ export const RegisterForm = () => {
       {submitError ? <p className="text-[11px]">{submitError}</p> : null}
       {submitInfo ? <p className="text-xs text-amber-100">{submitInfo}</p> : null}
 
-      <AuthSubmitButton
-        isLoading={isSubmitting}
-        loadingText="Creating account..."
-        idleText="Create Account"
-        className="h-8 border-0 bg-white/10 text-[11px] hover:bg-white/15"
-      />
+      <button type="submit" className="hidden" disabled={isSubmitting} aria-hidden />
     </form>
   );
 };
