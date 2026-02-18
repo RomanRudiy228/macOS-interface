@@ -1,6 +1,7 @@
 export type RememberedAuthUser = {
   email: string;
   username: string;
+  avatarUrl?: string | null;
 };
 
 const rememberedAuthUserKey = "remembered-auth-user";
@@ -24,6 +25,10 @@ export const getRememberedAuthUser = (): RememberedAuthUser | null => {
     return {
       email: parsedValue.email,
       username: parsedValue.username,
+      avatarUrl:
+        typeof parsedValue.avatarUrl === "string" || parsedValue.avatarUrl === null
+          ? parsedValue.avatarUrl
+          : null,
     };
   } catch {
     return null;

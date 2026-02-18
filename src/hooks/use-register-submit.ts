@@ -44,9 +44,24 @@ export const useRegisterSubmit = () => {
       return;
     }
 
+    const userId = signInData.user.id;
+    const { error: profileUpsertError } = await supabase.from("profiles").upsert(
+      {
+        id: userId,
+        email: values.email,
+        username: displayUsername,
+      },
+      { onConflict: "id" }
+    );
+
+    if (profileUpsertError) {
+      setSubmitInfo("Account created, but profile sync failed.");
+    }
+
     setRememberedAuthUser({
       email: values.email,
       username: displayUsername,
+      avatarUrl: null,
     });
 
     const avatar = values.avatar instanceof File ? values.avatar : undefined;
@@ -67,12 +82,23 @@ export const useRegisterSubmit = () => {
           .from("avatars")
           .getPublicUrl(avatarPath);
 
-        await supabase.auth.updateUser({
-          data: {
-            username: displayUsername,
+        const { error: profileAvatarError } = await supabase
+          .from("profiles")
+          .update({
+            avatar_path: avatarPath,
             avatar_url: publicUrlData.publicUrl,
-          },
-        });
+          })
+          .eq("id", userId);
+
+        if (profileAvatarError) {
+          setSubmitInfo("Account created, but avatar sync to profile failed.");
+        } else {
+          setRememberedAuthUser({
+            email: values.email,
+            username: displayUsername,
+            avatarUrl: publicUrlData.publicUrl,
+          });
+        }
       } else {
         setSubmitInfo(
           "Account created, but avatar upload failed. Check the avatars bucket."

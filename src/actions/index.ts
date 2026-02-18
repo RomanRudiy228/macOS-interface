@@ -6,3 +6,4 @@ export * from "./wallpapers-get";
 export * from "./settings-get";
 export * from "./settings-set-wallpaper";
 export * from "./apps-get";
+export * from "./profile-get-by-email";

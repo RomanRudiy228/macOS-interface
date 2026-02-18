@@ -1,19 +1,44 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { LockScreenClock } from "@/components/auth/lock-screen-clock";
 import { LoginForm } from "@/components/auth/login-form";
+import { getProfileByEmail } from "@/actions";
 import { getRememberedAuthUser } from "@/utils";
 
 export default function LoginPage() {
   const [rememberedUsername, setRememberedUsername] = useState("User");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const rememberedUser = getRememberedAuthUser();
-    if (rememberedUser?.username) {
+    if (!rememberedUser) return;
+
+    if (rememberedUser.username) {
       setRememberedUsername(rememberedUser.username);
     }
+
+    if (rememberedUser.avatarUrl) {
+      setAvatarUrl(rememberedUser.avatarUrl);
+    }
+
+    const syncProfile = async () => {
+      const profile = await getProfileByEmail(rememberedUser.email);
+
+      if (!profile) return;
+
+      if (profile.username) {
+        setRememberedUsername(profile.username);
+      }
+
+      if (typeof profile.avatarUrl === "string") {
+        setAvatarUrl(profile.avatarUrl);
+      }
+    };
+
+    void syncProfile();
   }, []);
 
   const userInitial = useMemo(
@@ -29,8 +54,19 @@ export default function LoginPage() {
       <LockScreenClock />
 
       <section className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/35 bg-white/20 text-lg font-semibold text-white">
-          {userInitial}
+        <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border border-white/35 bg-white/20 text-lg font-semibold text-white">
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt={`${rememberedUsername} avatar`}
+              fill
+              sizes="64px"
+              className="object-cover"
+              onError={() => setAvatarUrl(null)}
+            />
+          ) : (
+            userInitial
+          )}
         </div>
         <p className="mt-4 text-sm font-medium text-white/95">{rememberedUsername}</p>
         <LoginForm />

@@ -27,7 +27,7 @@ export const useLoginSubmit = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: rememberedUser.email,
       password: values.password,
     });
@@ -37,7 +37,26 @@ export const useLoginSubmit = () => {
       return;
     }
 
-    setRememberedAuthUser(rememberedUser);
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("email, username, avatar_url")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (profile?.email && profile?.username) {
+        setRememberedAuthUser({
+          email: profile.email,
+          username: profile.username,
+          avatarUrl: profile.avatar_url,
+        });
+      } else {
+        setRememberedAuthUser(rememberedUser);
+      }
+    } else {
+      setRememberedAuthUser(rememberedUser);
+    }
 
     router.replace("/");
     router.refresh();
