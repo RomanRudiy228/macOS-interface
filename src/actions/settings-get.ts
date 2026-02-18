@@ -9,10 +9,15 @@ export async function getSettings(): Promise<{
   try {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { wallpaperId: null };
+
     const { data, error } = await supabase
       .from("settings")
       .select("wallpaper_id")
-      .limit(1)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (error || !data) return { wallpaperId: null };

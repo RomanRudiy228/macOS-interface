@@ -97,18 +97,21 @@ export type Database = {
           id: number;
           system_color: string | null;
           theme: string | null;
+          user_id: string | null;
           wallpaper_id: string | null;
         };
         Insert: {
           id?: never;
           system_color?: string | null;
           theme?: string | null;
+          user_id?: string | null;
           wallpaper_id?: string | null;
         };
         Update: {
           id?: never;
           system_color?: string | null;
           theme?: string | null;
+          user_id?: string | null;
           wallpaper_id?: string | null;
         };
         Relationships: [
@@ -124,6 +127,13 @@ export type Database = {
             columns: ["theme"];
             isOneToOne: false;
             referencedRelation: "themes";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settings_wallpaper_id_fkey";
+            columns: ["wallpaper_id"];
+            isOneToOne: false;
+            referencedRelation: "wallpapers";
             referencedColumns: ["id"];
           },
         ];
