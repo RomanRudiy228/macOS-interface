@@ -27,24 +27,38 @@ export async function getDockItems(): Promise<DockItemView[]> {
       return getFallbackDockItems();
     }
 
-    const apps = await getApps();
-    const items: DockItemView[] = [];
-    for (const row of data) {
-      const app = apps[row.app_key];
-      if (!app) continue;
-      items.push({
-        id: row.id,
-        appKey: row.app_key,
-        name: app.name,
-        src: app.src,
-        isLocked: row.is_locked ?? false,
-      });
-    }
-
+    const items = await mapDockRowsToItems(data);
     return items.length ? items : getFallbackDockItems();
   } catch {
     return getFallbackDockItems();
   }
+}
+
+async function mapDockRowsToItems(
+  rows: Array<{
+    id: string;
+    app_key: string;
+    position: number;
+    is_locked: boolean;
+  }>
+): Promise<DockItemView[]> {
+  const apps = await getApps();
+  const items: DockItemView[] = [];
+
+  for (const row of rows) {
+    const app = apps[row.app_key];
+    if (!app) continue;
+
+    items.push({
+      id: row.id,
+      appKey: row.app_key,
+      name: app.name,
+      src: app.src,
+      isLocked: row.is_locked ?? false,
+    });
+  }
+
+  return items;
 }
 
 async function getFallbackDockItems(): Promise<DockItemView[]> {
