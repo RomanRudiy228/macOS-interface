@@ -12,7 +12,7 @@ export default function RegisterPage() {
 
       <LockScreenClock />
 
-      <section className="relative z-10 mt-[400px] flex flex-col items-center">
+      <section className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center">
         <RegisterForm />
         <p className="mt-2 text-xs text-white/80">
           Already have an account?{" "}

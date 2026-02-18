@@ -28,7 +28,7 @@ export default function LoginPage() {
 
       <LockScreenClock />
 
-      <section className="relative z-10 mt-[550px] flex flex-col items-center">
+      <section className="absolute bottom-10 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/35 bg-white/20 text-lg font-semibold text-white">
           {userInitial}
         </div>

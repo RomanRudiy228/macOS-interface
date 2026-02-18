@@ -1,15 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
 import { TextInput } from "@/components/input";
 import { registerSchema, type RegisterValues } from "@/schemas";
 import { useRegisterSubmit } from "@/hooks/use-register-submit";
 
 export const RegisterForm = () => {
   const { onSubmit, submitError, submitInfo } = useRegisterSubmit();
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -92,7 +94,7 @@ export const RegisterForm = () => {
           className="h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.username ? (
-          <p className="text-[11px]">{errors.username.message}</p>
+          <p className="pl-2 text-[11px]">{errors.username.message}</p>
         ) : null}
       </div>
 
@@ -106,26 +108,36 @@ export const RegisterForm = () => {
           className="h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.email ? (
-          <p className="text-[11px]">{errors.email.message}</p>
+          <p className="pl-2 text-[11px]">{errors.email.message}</p>
         ) : null}
       </div>
 
       <div className="space-y-1.5">
-        <TextInput
-          {...register("password")}
-          unstyled
-          type="password"
-          autoComplete="new-password"
-          placeholder="Enter Password"
-          className="h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
-        />
+        <div className="relative">
+          <TextInput
+            {...register("password")}
+            unstyled
+            type={showPassword ? "text" : "password"}
+            autoComplete="new-password"
+            placeholder="Enter Password"
+            className="h-8 w-full rounded-full bg-white/10 px-3 pr-9 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
+          />
+          <button
+            type="button"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white"
+            onClick={() => setShowPassword((prev) => !prev)}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        </div>
         {errors.password ? (
-          <p className="text-[11px]">{errors.password.message}</p>
+          <p className="pl-2 text-[11px]">{errors.password.message}</p>
         ) : null}
       </div>
 
-      {submitError ? <p className="text-[11px]">{submitError}</p> : null}
-      {submitInfo ? <p className="text-xs text-amber-100">{submitInfo}</p> : null}
+      {submitError ? <p className="pl-2 text-[11px]">{submitError}</p> : null}
+      {submitInfo ? <p className="pl-2 text-xs text-amber-100">{submitInfo}</p> : null}
 
       <button type="submit" className="hidden" disabled={isSubmitting} aria-hidden />
     </form>

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/supabase/client";
-import { normalizeUsername } from "@/utils/auth";
 import { setRememberedAuthUser } from "@/utils/storage/auth-user-storage";
 import { type RegisterValues } from "@/schemas";
 
@@ -17,14 +16,14 @@ export const useRegisterSubmit = () => {
     setSubmitError(null);
     setSubmitInfo(null);
 
-    const normalizedUsername = normalizeUsername(values.username);
+    const displayUsername = values.username.trim();
 
     const { error: signUpError } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
         data: {
-          username: normalizedUsername,
+          username: displayUsername,
         },
       },
     });
@@ -47,7 +46,7 @@ export const useRegisterSubmit = () => {
 
     setRememberedAuthUser({
       email: values.email,
-      username: normalizedUsername,
+      username: displayUsername,
     });
 
     const avatar = values.avatar instanceof File ? values.avatar : undefined;
@@ -70,7 +69,7 @@ export const useRegisterSubmit = () => {
 
         await supabase.auth.updateUser({
           data: {
-            username: normalizedUsername,
+            username: displayUsername,
             avatar_url: publicUrlData.publicUrl,
           },
         });
