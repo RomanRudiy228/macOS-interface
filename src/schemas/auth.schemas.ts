@@ -26,9 +26,18 @@ export const registerSchema = z
       .string()
       .min(6, "Password must be at least 6 characters.")
       .max(72, "Password must be at most 72 characters."),
+    confirmPassword: z.string(),
     avatar: z.unknown().optional(),
   })
   .superRefine((value, ctx) => {
+    if (value.password !== value.confirmPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["confirmPassword"],
+        message: "Passwords do not match.",
+      });
+    }
+
     if (!value.avatar) return;
 
     if (!(value.avatar instanceof File)) {

@@ -12,6 +12,7 @@ import { useRegisterSubmit } from "@/hooks/use-register-submit";
 export const RegisterForm = () => {
   const { onSubmit, submitError, submitInfo } = useRegisterSubmit();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -25,6 +26,7 @@ export const RegisterForm = () => {
       username: "",
       email: "",
       password: "",
+      confirmPassword: "",
       avatar: undefined,
     },
   });
@@ -79,7 +81,7 @@ export const RegisterForm = () => {
         />
       </div>
       {errors.avatar ? (
-        <p className="text-center text-[11px]">
+        <p className="text-center text-[11px] text-white/90">
           {errors.avatar.message as string}
         </p>
       ) : null}
@@ -91,10 +93,10 @@ export const RegisterForm = () => {
           type="text"
           autoComplete="username"
           placeholder="Enter Username"
-          className="h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
+          className="auth-input h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.username ? (
-          <p className="pl-2 text-[11px]">{errors.username.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">{errors.username.message}</p>
         ) : null}
       </div>
 
@@ -105,10 +107,10 @@ export const RegisterForm = () => {
           type="email"
           autoComplete="email"
           placeholder="Enter Email"
-          className="h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
+          className="auth-input h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.email ? (
-          <p className="pl-2 text-[11px]">{errors.email.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">{errors.email.message}</p>
         ) : null}
       </div>
 
@@ -120,7 +122,7 @@ export const RegisterForm = () => {
             type={showPassword ? "text" : "password"}
             autoComplete="new-password"
             placeholder="Enter Password"
-            className="h-8 w-full rounded-full bg-white/10 px-3 pr-9 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
+            className="auth-input h-8 w-full rounded-full bg-white/10 px-3 pr-9 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
           />
           <button
             type="button"
@@ -132,11 +134,35 @@ export const RegisterForm = () => {
           </button>
         </div>
         {errors.password ? (
-          <p className="pl-2 text-[11px]">{errors.password.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">{errors.password.message}</p>
         ) : null}
       </div>
 
-      {submitError ? <p className="pl-2 text-[11px]">{submitError}</p> : null}
+      <div className="space-y-1.5">
+        <div className="relative">
+          <TextInput
+            {...register("confirmPassword")}
+            unstyled
+            type={showConfirmPassword ? "text" : "password"}
+            autoComplete="new-password"
+            placeholder="Confirm Password"
+            className="auth-input h-8 w-full rounded-full bg-white/10 px-3 pr-9 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
+          />
+          <button
+            type="button"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-white/80 transition hover:text-white"
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
+            aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+          >
+            {showConfirmPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+          </button>
+        </div>
+        {errors.confirmPassword ? (
+          <p className="pl-2 text-[11px] text-white/90">{errors.confirmPassword.message}</p>
+        ) : null}
+      </div>
+
+      {submitError ? <p className="pl-2 text-[11px] text-white/90">{submitError}</p> : null}
       {submitInfo ? <p className="pl-2 text-xs text-amber-100">{submitInfo}</p> : null}
 
       <button type="submit" className="hidden" disabled={isSubmitting} aria-hidden />
