@@ -7,51 +7,6 @@ import { addToDock, reorderDockItems, removeFromDock } from "@/actions";
 import type { DockItemView } from "@/types";
 import type { AppCatalog } from "@/actions/apps-get";
 
-const LOCAL_DOCK_ITEMS_KEY = "macos-interface:dock-items";
-
-function buildDockItemsFromKeys(
-  appKeys: string[],
-  baseItems: DockItemView[],
-  availableApps: Record<string, AppCatalog>
-): DockItemView[] {
-  const uniqueValidKeys = Array.from(
-    new Set(
-      appKeys.filter((appKey) => availableApps[appKey] && appKey !== "bin")
-    )
-  );
-
-  const baseByAppKey = new Map(baseItems.map((item) => [item.appKey, item]));
-
-  const mainItems = uniqueValidKeys.map((appKey) => {
-    const existing = baseByAppKey.get(appKey);
-    if (existing) return existing;
-
-    const app = availableApps[appKey];
-    return {
-      id: `local-${appKey}`,
-      appKey,
-      name: app.name,
-      src: app.src,
-      isLocked: false,
-    };
-  });
-
-  const binItem = baseByAppKey.get("bin");
-  if (binItem) return [...mainItems, binItem];
-
-  const binApp = availableApps.bin;
-  return [
-    ...mainItems,
-    {
-      id: "local-bin",
-      appKey: "bin",
-      name: binApp.name,
-      src: binApp.src,
-      isLocked: false,
-    },
-  ];
-}
-
 export function useDockItems(
   initialItems: DockItemView[],
   availableApps: Record<string, AppCatalog> = {}
@@ -59,27 +14,8 @@ export function useDockItems(
   const [items, setItems] = useState<DockItemView[]>(initialItems);
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(LOCAL_DOCK_ITEMS_KEY);
-      if (!raw) return;
-
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) return;
-
-      setItems(buildDockItemsFromKeys(parsed, initialItems, availableApps));
-    } catch {
-      // Ignore local storage errors and keep server-backed items.
-    }
-  }, [initialItems, availableApps]);
-
-  useEffect(() => {
-    try {
-      const appKeys = items.map((item) => item.appKey);
-      window.localStorage.setItem(LOCAL_DOCK_ITEMS_KEY, JSON.stringify(appKeys));
-    } catch {
-      // Ignore local storage write failures.
-    }
-  }, [items]);
+    setItems(initialItems);
+  }, [initialItems]);
 
   const mainItems = items.slice(0, -1);
   const binItem = items[items.length - 1];

@@ -1,5 +1,30 @@
 import { MenuItem } from "../components/context-menu/context-menu";
 
+export const getAppleMenuItems = (
+  displayUsername: string,
+  onLogout: () => void
+): MenuItem[] => [
+  { label: "About This Mac" },
+  { isDivider: true, label: "" },
+  { label: "System Settings...", shortcut: "1 update" },
+  { label: "App Store" },
+  { isDivider: true, label: "" },
+  { label: "Recent Items", shortcut: "›" },
+  { isDivider: true, label: "" },
+  { label: "Force Quit Finder", shortcut: "⌥ ⇧ ⌘ ⎋" },
+  { isDivider: true, label: "" },
+  { label: "Sleep", shortcut: "⌥ ⌘ ⏻" },
+  { label: "Restart...", shortcut: "⌃ ⌘ ⏻" },
+  { label: "Shut Down...", shortcut: "⌃ ⌥ ⌘ ⏻" },
+  { isDivider: true, label: "" },
+  { label: "Lock Screen", shortcut: "⌃ ⌘ Q" },
+  {
+    label: `Log Out (${displayUsername})...`,
+    shortcut: "⇧ ⌘ Q",
+    onClick: onLogout,
+  },
+];
+
 // -----------------------------------------------------------
 // Finder Menu
 // -----------------------------------------------------------
@@ -94,3 +119,4 @@ export const helpMenuItems: MenuItem[] = [
   { isDivider: true, label: "" },
   { label: "macOS Help" },
 ];
+
