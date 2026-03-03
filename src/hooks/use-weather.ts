@@ -24,13 +24,13 @@ export const useWeather = (apiKey: string) => {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`
       );
-      if (!res.ok) throw new Error("Помилка відповіді сервера");
+      if (!res.ok) throw new Error("Server response error");
 
       const data = await res.json();
       setWeather(data);
       setError(null);
     } catch (error) {
-      console.error("Помилка завантаження погоди:", error);
+      console.error("Error loading weather:", error);
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,7 @@ export const useWeather = (apiKey: string) => {
 
   useEffect(() => {
     if (!navigator.geolocation) {
-      setError("Геолокація не підтримується браузером");
+      setError("Geolocation is not supported by the browser.");
       setLoading(false);
       return;
     }
