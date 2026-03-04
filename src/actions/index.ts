@@ -7,3 +7,6 @@ export * from "./settings-get";
 export * from "./settings-set-wallpaper";
 export * from "./apps-get";
 export * from "./profile-get-by-email";
+export * from "./conversations-get";
+export * from "./messages-get";
+export * from "./users-search";

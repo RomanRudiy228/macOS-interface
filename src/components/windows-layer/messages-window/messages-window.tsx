@@ -1,8 +1,99 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { useChat } from "@/hooks/use-chat";
 
 export const MessagesWindow: React.FC = () => {
+  const {
+    conversations,
+    selectedConversationId,
+    messages,
+    isLoading,
+    error,
+    setSelectedConversationId,
+    handleSendMessage,
+    // User search
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    isSearching,
+    showUserSearch,
+    setShowUserSearch,
+    openUserSearch,
+    startConversation,
+  } = useChat();
+
+  const [messageInput, setMessageInput] = useState("");
+  const [conversationSearchQuery, setConversationSearchQuery] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSendClick = async () => {
+    if (!messageInput.trim()) return;
+
+    try {
+      await handleSendMessage(messageInput);
+      setMessageInput("");
+    } catch (err) {
+      console.error("Error sending message:", err);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendClick();
+    }
+  };
+
+  const filteredConversations = conversations.filter((conv) =>
+    conv.otherUserProfile.username
+      .toLowerCase()
+      .includes(conversationSearchQuery.toLowerCase())
+  );
+
+  const selectedConversation = conversations.find(
+    (c) => c.id === selectedConversationId
+  );
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMins < 1) return "now";
+    if (diffMins < 60) return `${diffMins}m`;
+    if (diffHours < 24) return `${diffHours}h`;
+    if (diffDays === 1) return "yesterday";
+    if (diffDays < 7) return date.toLocaleDateString("uk-UA", { weekday: "short" });
+    return date.toLocaleDateString("uk-UA");
+  };
+
+  const getAvatarInitial = (username: string) => {
+    return username.charAt(0).toUpperCase();
+  };
+
+  const getAvatarColor = (username: string) => {
+    const colors = [
+      "bg-red-500",
+      "bg-blue-500",
+      "bg-green-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-yellow-500",
+      "bg-orange-500",
+      "bg-indigo-500",
+    ];
+    const hash = username.charCodeAt(0) + username.charCodeAt(username.length - 1);
+    return colors[hash % colors.length];
+  };
   return (
     <div className="flex h-full bg-white dark:bg-slate-800">
       {/* Sidebar - Conversations List */}
@@ -12,181 +103,279 @@ export const MessagesWindow: React.FC = () => {
           <h1 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
             Messages
           </h1>
-          <div className="flex space-x-1">
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-4 h-4 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-4 h-4 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="p-3 border-b border-gray-200 dark:border-slate-600">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search"
-              className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
-            />
-            <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <button
+            onClick={openUserSearch}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
+            title="Start new conversation"
+          >
+            <svg className="w-5 h-5 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-          </div>
+          </button>
         </div>
 
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="divide-y divide-gray-200 dark:divide-slate-600">
-            {/* Active conversation */}
-            <div className="flex items-center p-3 bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500 cursor-pointer">
-              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
-                A
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">Анна</h3>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">10:30</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                  Привіт! Як твої справи?
-                </p>
-              </div>
-            </div>
-
-            {/* Other conversations */}
-            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer">
-              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
-                B
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">Богдан</h3>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">09:15</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                  Доброго дня! Маю питання щодо проекту.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer">
-              <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
-                C
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">Катя</h3>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">Вчора</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                  Дякую за допомогу!
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center p-3 hover:bg-gray-50 dark:hover:bg-slate-700 cursor-pointer">
-              <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
-                D
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center mb-1">
-                  <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">Дмитро</h3>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">Пн</span>
-                </div>
-                <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                  Зустрінемося завтра?
-                </p>
-              </div>
+        {/* Search conversations or users */}
+        {!showUserSearch ? (
+          <div className="p-3 border-b border-gray-200 dark:border-slate-600">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search conversations"
+                value={conversationSearchQuery}
+                onChange={(e) => setConversationSearchQuery(e.target.value)}
+                className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
+              />
+              <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
           </div>
+        ) : (
+          <div className="p-3 border-b border-gray-200 dark:border-slate-600">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+                className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
+              />
+              <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <button
+              onClick={() => setShowUserSearch(false)}
+              className="mt-2 w-full px-3 py-1 text-sm text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors"
+            >
+              ← Back to conversations
+            </button>
+          </div>
+        )}
+
+        {/* Conversations or Users List */}
+        <div className="flex-1 overflow-y-auto">
+          {showUserSearch ? (
+            // User search results
+            <>
+              {isSearching ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500 dark:text-slate-400">Searching...</p>
+                </div>
+              ) : searchResults.length === 0 ? (
+                <div className="flex items-center justify-center h-full p-4">
+                  <p className="text-center text-gray-500 dark:text-slate-400">
+                    {searchQuery ? "No users found" : "No available users"}
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200 dark:divide-slate-600">
+                  {searchResults.map((user) => (
+                    <button
+                      key={user.id}
+                      onClick={() => startConversation(user.id)}
+                      disabled={isLoading}
+                      className={`w-full flex items-center p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
+                        isLoading ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
+                    >
+                      <div
+                        className={`w-10 h-10 ${getAvatarColor(
+                          user.username
+                        )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
+                      >
+                        {getAvatarInitial(user.username)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm">
+                          {user.username}
+                        </h3>
+                        <p className="text-xs text-gray-600 dark:text-slate-400 truncate">
+                          {user.email}
+                        </p>
+                      </div>
+                      <svg className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            // Conversations list
+            <>
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500 dark:text-slate-400">Loading...</p>
+                </div>
+              ) : filteredConversations.length === 0 ? (
+                <div className="flex items-center justify-center h-full p-4">
+                  <p className="text-center text-gray-500 dark:text-slate-400">
+                    No conversations yet. Click + to start a new chat!
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200 dark:divide-slate-600">
+                  {filteredConversations.map((conv) => {
+                    const lastMessage =
+                      messages.length > 0 && conv.id === selectedConversationId
+                        ? messages[messages.length - 1]?.content
+                        : "No messages yet";
+
+                    return (
+                      <button
+                        key={conv.id}
+                        onClick={() => setSelectedConversationId(conv.id)}
+                    className={`w-full flex items-center p-3 text-left transition-colors ${
+                      selectedConversationId === conv.id
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
+                        : "hover:bg-gray-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <div
+                      className={`w-10 h-10 ${getAvatarColor(
+                        conv.otherUserProfile.username
+                      )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
+                    >
+                      {getAvatarInitial(conv.otherUserProfile.username)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                          {conv.otherUserProfile.username}
+                        </h3>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 ml-2 flex-shrink-0">
+                          {formatTime(conv.updated_at)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
+                        {lastMessage}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-600">
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3">
-              A
+        {selectedConversation ? (
+          <>
+            {/* Chat Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-600">
+              <div className="flex items-center">
+                <div
+                  className={`w-8 h-8 ${getAvatarColor(
+                    selectedConversation.otherUserProfile.username
+                  )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
+                >
+                  {getAvatarInitial(selectedConversation.otherUserProfile.username)}
+                </div>
+                <div>
+                  <h2 className="font-semibold text-gray-900 dark:text-slate-100">
+                    {selectedConversation.otherUserProfile.username}
+                  </h2>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">
+                    {selectedConversation.otherUserProfile.email}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h2 className="font-semibold text-gray-900 dark:text-slate-100">Анна</h2>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Active now</p>
-            </div>
-          </div>
-          <div className="flex space-x-1">
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-4 h-4 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-4 h-4 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-4 h-4 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-              </svg>
-            </button>
-          </div>
-        </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Sample messages */}
-          <div className="flex justify-start">
-            <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100">
-              <p>Привіт! Як твої справи?</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">10:28</p>
-            </div>
-          </div>
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.length === 0 ? (
+                <div className="flex items-center justify-center h-full">
+                  <p className="text-gray-500 dark:text-slate-400">
+                    No messages yet. Start the conversation!
+                  </p>
+                </div>
+              ) : (
+                messages.map((msg) => {
+                  const isOwnMessage =
+                    msg.senderProfile.username ===
+                    selectedConversation.otherUserProfile.username;
 
-          <div className="flex justify-end">
-            <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl bg-blue-500 text-white">
-              <p>Привіт! Усе добре, дякую. А в тебе?</p>
-              <p className="text-xs opacity-70 mt-1">10:29</p>
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex ${
+                        isOwnMessage ? "justify-start" : "justify-end"
+                      }`}
+                    >
+                      <div
+                        className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                          isOwnMessage
+                            ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
+                            : "bg-blue-500 text-white"
+                        }`}
+                      >
+                        <p className="break-words">{msg.content}</p>
+                        <p
+                          className={`text-xs ${
+                            isOwnMessage
+                              ? "text-gray-500 dark:text-slate-400"
+                              : "text-blue-100"
+                          } mt-1`}
+                        >
+                          {new Date(msg.created_at).toLocaleTimeString("uk-UA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+              <div ref={messagesEndRef} />
             </div>
-          </div>
 
-          <div className="flex justify-start">
-            <div className="max-w-xs lg:max-w-md px-4 py-2 rounded-2xl bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100">
-              <p>Теж непогано. Працюю над проектом.</p>
-              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">10:30</p>
+            {/* Message Input */}
+            <div className="p-4 border-t border-gray-200 dark:border-slate-600">
+              {error && (
+                <div className="mb-2 text-xs text-red-500 dark:text-red-400">
+                  {error}
+                </div>
+              )}
+              <div className="flex items-end space-x-2">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    disabled={isLoading}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100 disabled:opacity-50"
+                  />
+                </div>
+                <button
+                  onClick={handleSendClick}
+                  disabled={!messageInput.trim() || isLoading}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.99 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.01298827 C3.34915502,-0.1 2.40734225,0.0570974071 1.77946707,0.4283718264 C0.994623095,1.05701895 0.837654326,2.00848975 1.15159189,2.95011527 L3.03521743,9.39237306 C3.03521743,9.54947052 3.19218622,9.70656798 3.50612381,9.70656798 L16.6915026,10.4920549 C16.6915026,10.4920549 17.1624089,10.4920549 17.1624089,9.98090862 L17.1624089,11.4772061 C17.1624089,11.9485983 16.6915026,12.4744748 16.6915026,12.4744748 Z" />
+                  </svg>
+                </button>
+              </div>
             </div>
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-gray-500 dark:text-slate-400">
+              Select a conversation to start messaging
+            </p>
           </div>
-        </div>
-
-        {/* Message Input */}
-        <div className="p-4 border-t border-gray-200 dark:border-slate-600">
-          <div className="flex items-end space-x-2">
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-5 h-5 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-              </svg>
-            </button>
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="iMessage"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
-              />
-            </div>
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700">
-              <svg className="w-5 h-5 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
