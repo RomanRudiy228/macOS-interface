@@ -6,6 +6,7 @@ import {
 } from "@/actions/conversations-get";
 import { getMessages, sendMessage, type MessageWithProfile } from "@/actions/messages-get";
 import { searchUsers, getAllUsers, type UserProfile } from "@/actions/users-search";
+import { createClient } from "@/supabase/client";
 
 export function useChat() {
   const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
@@ -27,6 +28,30 @@ export function useChat() {
     loadConversations();
   }, []);
 
+  // Realtime subscription for conversations
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel('conversations')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'conversations',
+        },
+        () => {
+          // Reload conversations when any conversation is updated
+          loadConversations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
   // Load messages when conversation changes
   useEffect(() => {
     if (selectedConversationId) {
@@ -34,17 +59,65 @@ export function useChat() {
     }
   }, [selectedConversationId]);
 
-  // Auto-refresh messages every 2 seconds
+  // Realtime subscription for messages
   useEffect(() => {
-    if (!selectedConversationId) {
-      return;
-    }
+    if (!selectedConversationId) return;
 
-    const interval = setInterval(() => {
-      loadMessages(selectedConversationId);
-    }, 2000);
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`messages:${selectedConversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${selectedConversationId}`,
+        },
+        async (payload) => {
+          // Fetch the new message with profile
+          const { data: message, error } = await supabase
+            .from('messages')
+            .select('*')
+            .eq('id', payload.new.id)
+            .single();
 
-    return () => clearInterval(interval);
+          if (error) {
+            console.error('Error fetching new message:', error);
+            return;
+          }
+
+          // Get sender profile
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('username, avatar_url')
+            .eq('id', message.sender_id)
+            .single();
+
+          if (profileError) {
+            console.error('Error fetching profile:', profileError);
+          }
+
+          const messageWithProfile: MessageWithProfile = {
+            ...message,
+            senderProfile: {
+              username: profile?.username || 'Unknown',
+              avatar_url: profile?.avatar_url || null,
+            },
+          };
+
+          // Add new message to state
+          setMessages(prev => [...prev, messageWithProfile]);
+
+          // Reload conversations to update last message
+          loadConversations();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [selectedConversationId]);
 
   // Search users as user types
@@ -94,11 +167,13 @@ export function useChat() {
 
     try {
       setError(null);
-      await sendMessage(selectedConversationId, content);
-      // Reload messages after sending
-      await loadMessages(selectedConversationId);
-      // Reload conversations to update "last message"
-      await loadConversations();
+      const newMessage = await sendMessage(selectedConversationId, content);
+      if (newMessage) {
+        // Add the new message to state immediately
+        setMessages(prev => [...prev, newMessage]);
+        // Reload conversations to update "last message"
+        await loadConversations();
+      }
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to send message";

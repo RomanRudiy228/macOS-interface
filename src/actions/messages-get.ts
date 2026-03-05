@@ -78,7 +78,7 @@ export async function getMessages(
 export async function sendMessage(
   conversationId: string,
   content: string
-): Promise<Message | null> {
+): Promise<MessageWithProfile | null> {
   try {
     if (!content.trim()) {
       throw new Error("Message cannot be empty");
@@ -130,13 +130,30 @@ export async function sendMessage(
       throw insertError;
     }
 
+    // Get sender profile
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("username, avatar_url")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Error fetching sender profile:", profileError);
+    }
+
     // Update conversation timestamp
     await supabase
       .from("conversations")
       .update({ updated_at: new Date().toISOString() })
       .eq("id", conversationId);
 
-    return message;
+    return {
+      ...message,
+      senderProfile: {
+        username: profile?.username || "Unknown",
+        avatar_url: profile?.avatar_url || null,
+      },
+    };
   } catch (error) {
     console.error("Error in sendMessage:", error);
     throw error;
