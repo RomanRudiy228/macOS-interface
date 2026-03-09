@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, PanInfo } from "framer-motion";
+import { motion, PanInfo } from "motion/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import type { Rect } from "@/utils/collisions";
 
