@@ -21,6 +21,7 @@ export const MessagesWindow: React.FC = () => {
     setShowUserSearch,
     openUserSearch,
     startConversation,
+    currentUserId,
   } = useChat();
 
   const [messageInput, setMessageInput] = useState("");
@@ -73,7 +74,8 @@ export const MessagesWindow: React.FC = () => {
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays === 1) return "yesterday";
-    if (diffDays < 7) return date.toLocaleDateString("uk-UA", { weekday: "short" });
+    if (diffDays < 7)
+      return date.toLocaleDateString("uk-UA", { weekday: "short" });
     return date.toLocaleDateString("uk-UA");
   };
 
@@ -92,7 +94,8 @@ export const MessagesWindow: React.FC = () => {
       "bg-orange-500",
       "bg-indigo-500",
     ];
-    const hash = username.charCodeAt(0) + username.charCodeAt(username.length - 1);
+    const hash =
+      username.charCodeAt(0) + username.charCodeAt(username.length - 1);
     return colors[hash % colors.length];
   };
 
@@ -117,8 +120,18 @@ export const MessagesWindow: React.FC = () => {
             className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
             title="Start new conversation"
           >
-            <svg className="w-5 h-5 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg
+              className="w-5 h-5 text-gray-600 dark:text-slate-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
           </button>
         </div>
@@ -134,8 +147,18 @@ export const MessagesWindow: React.FC = () => {
                 onChange={(e) => setConversationSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
               />
-              <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
           </div>
@@ -150,8 +173,18 @@ export const MessagesWindow: React.FC = () => {
                 autoFocus
                 className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
               />
-              <svg className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
             <button
@@ -170,7 +203,9 @@ export const MessagesWindow: React.FC = () => {
             <>
               {isSearching ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500 dark:text-slate-400">Searching...</p>
+                  <p className="text-gray-500 dark:text-slate-400">
+                    Searching...
+                  </p>
                 </div>
               ) : searchResults.length === 0 ? (
                 <div className="flex items-center justify-center h-full p-4">
@@ -204,8 +239,18 @@ export const MessagesWindow: React.FC = () => {
                           {user.email}
                         </p>
                       </div>
-                      <svg className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </button>
                   ))}
@@ -217,7 +262,9 @@ export const MessagesWindow: React.FC = () => {
             <>
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500 dark:text-slate-400">Loading...</p>
+                  <p className="text-gray-500 dark:text-slate-400">
+                    Loading...
+                  </p>
                 </div>
               ) : filteredConversations.length === 0 ? (
                 <div className="flex items-center justify-center h-full p-4">
@@ -229,43 +276,41 @@ export const MessagesWindow: React.FC = () => {
                 <div className="divide-y divide-gray-200 dark:divide-slate-600">
                   {filteredConversations.map((conv) => {
                     const lastMessage =
-                      messages.length > 0 && conv.id === selectedConversationId
-                        ? messages[messages.length - 1]?.content
-                        : "No messages yet";
+                      conv.lastMessageContent ?? "No messages yet";
 
                     return (
                       <button
                         key={conv.id}
                         onClick={() => setSelectedConversationId(conv.id)}
-                    className={`w-full flex items-center p-3 text-left transition-colors ${
-                      selectedConversationId === conv.id
-                        ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
-                        : "hover:bg-gray-50 dark:hover:bg-slate-700"
-                    }`}
-                  >
-                    <div
-                      className={`w-10 h-10 ${getAvatarColor(
-                        conv.otherUserProfile.username
-                      )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
-                    >
-                      {getAvatarInitial(conv.otherUserProfile.username)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center mb-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
-                          {conv.otherUserProfile.username}
-                        </h3>
-                        <span className="text-xs text-gray-500 dark:text-slate-400 ml-2 flex-shrink-0">
-                          {formatTime(conv.updated_at)}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                        {lastMessage}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
+                        className={`w-full flex items-center p-3 text-left transition-colors ${
+                          selectedConversationId === conv.id
+                            ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
+                            : "hover:bg-gray-50 dark:hover:bg-slate-700"
+                        }`}
+                      >
+                        <div
+                          className={`w-10 h-10 ${getAvatarColor(
+                            conv.otherUserProfile.username
+                          )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
+                        >
+                          {getAvatarInitial(conv.otherUserProfile.username)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-center mb-1">
+                            <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                              {conv.otherUserProfile.username}
+                            </h3>
+                            <span className="text-xs text-gray-500 dark:text-slate-400 ml-2 flex-shrink-0">
+                              {formatTime(conv.updated_at)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
+                            {lastMessage}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </>
@@ -285,7 +330,9 @@ export const MessagesWindow: React.FC = () => {
                     selectedConversation.otherUserProfile.username
                   )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
                 >
-                  {getAvatarInitial(selectedConversation.otherUserProfile.username)}
+                  {getAvatarInitial(
+                    selectedConversation.otherUserProfile.username
+                  )}
                 </div>
                 <div>
                   <h2 className="font-semibold text-gray-900 dark:text-slate-100">
@@ -309,34 +356,31 @@ export const MessagesWindow: React.FC = () => {
               ) : (
                 messages.map((msg) => {
                   const isOwnMessage =
-                    msg.senderProfile.username ===
-                    selectedConversation.otherUserProfile.username;
+                    currentUserId != null && msg.sender_id === currentUserId;
 
                   return (
                     <div
                       key={msg.id}
                       className={`flex ${
-                        isOwnMessage ? "justify-start" : "justify-end"
+                        isOwnMessage ? "justify-end" : "justify-start"
                       }`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                           isOwnMessage
-                            ? "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
-                            : "bg-blue-500 text-white"
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-slate-100"
                         }`}
                       >
                         <p className="break-words">{msg.content}</p>
                         <p
                           className={`text-xs ${
                             isOwnMessage
-                              ? "text-gray-500 dark:text-slate-400"
-                              : "text-blue-100"
+                              ? "text-blue-100"
+                              : "text-gray-500 dark:text-slate-400"
                           } mt-1`}
                         >
-                          {formatMessageTime(
-                            msg.created_at as string | null
-                          )}
+                          {formatMessageTime(msg.created_at as string | null)}
                         </p>
                       </div>
                     </div>
@@ -370,7 +414,11 @@ export const MessagesWindow: React.FC = () => {
                   disabled={!messageInput.trim() || isLoading}
                   className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <svg className="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                  <svg
+                    className="w-5 h-5 text-blue-500"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.99 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 L4.13399899,1.01298827 C3.34915502,-0.1 2.40734225,0.0570974071 1.77946707,0.4283718264 C0.994623095,1.05701895 0.837654326,2.00848975 1.15159189,2.95011527 L3.03521743,9.39237306 C3.03521743,9.54947052 3.19218622,9.70656798 3.50612381,9.70656798 L16.6915026,10.4920549 C16.6915026,10.4920549 17.1624089,10.4920549 17.1624089,9.98090862 L17.1624089,11.4772061 C17.1624089,11.9485983 16.6915026,12.4744748 16.6915026,12.4744748 Z" />
                   </svg>
                 </button>

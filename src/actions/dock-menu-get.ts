@@ -63,17 +63,15 @@ async function mapDockRowsToItems(
 
 async function getFallbackDockItems(): Promise<DockItemView[]> {
   const apps = await getApps();
-  return DEFAULT_DOCK_ORDER
-    .map((appKey, index) => {
-      const app = apps[appKey];
-      if (!app) return null;
-      return {
-        id: `fallback-${index}-${appKey}`,
-        appKey: appKey as string,
-        name: app.name,
-        src: app.src,
-        isLocked: false,
-      };
-    })
-    .filter((item): item is DockItemView => item !== null);
+  return DEFAULT_DOCK_ORDER.map((appKey, index) => {
+    const app = apps[appKey];
+    if (!app) return null;
+    return {
+      id: `fallback-${index}-${appKey}`,
+      appKey: appKey as string,
+      name: app.name,
+      src: app.src,
+      isLocked: false,
+    };
+  }).filter((item): item is DockItemView => item !== null);
 }

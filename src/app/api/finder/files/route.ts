@@ -35,7 +35,8 @@ const USER_SEED_FILES: Array<{
   },
   {
     path: "Documents/todo.md",
-    content: "- Connect Supabase bucket\n- Upload your own files\n- Open previews in Finder",
+    content:
+      "- Connect Supabase bucket\n- Upload your own files\n- Open previews in Finder",
     contentType: "text/markdown; charset=utf-8",
   },
   {
@@ -62,7 +63,8 @@ const USER_SEED_FILES: Array<{
   },
   {
     path: "Desktop/quick-note.md",
-    content: "# Desktop\n\nThis folder can store shortcuts, notes, and screenshots.",
+    content:
+      "# Desktop\n\nThis folder can store shortcuts, notes, and screenshots.",
     contentType: "text/markdown; charset=utf-8",
   },
 ];
@@ -132,7 +134,9 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   const source = parseSource(request.nextUrl.searchParams.get("source"));
   const sortBy = parseSortBy(request.nextUrl.searchParams.get("sortBy"));
-  const sortOrder = parseSortOrder(request.nextUrl.searchParams.get("sortOrder"));
+  const sortOrder = parseSortOrder(
+    request.nextUrl.searchParams.get("sortOrder")
+  );
   const requestedPath = sanitizeRelativePath(
     request.nextUrl.searchParams.get("path")
   );
@@ -268,9 +272,13 @@ async function getUserFiles(
   const entries: FinderEntry[] = (data ?? []).map((item) => {
     const isDirectory = item.id === null;
     const extension = path.extname(item.name).replace(".", "");
-    const metadata = item.metadata && typeof item.metadata === "object" ? item.metadata : null;
+    const metadata =
+      item.metadata && typeof item.metadata === "object" ? item.metadata : null;
     const size =
-      !isDirectory && metadata && "size" in metadata && typeof metadata.size === "number"
+      !isDirectory &&
+      metadata &&
+      "size" in metadata &&
+      typeof metadata.size === "number"
         ? metadata.size
         : 0;
     const relativePath = requestedPath
@@ -282,7 +290,8 @@ async function getUserFiles(
       relativePath: toUnixPath(relativePath),
       isDirectory,
       size,
-      modifiedAt: item.updated_at ?? item.created_at ?? new Date(0).toISOString(),
+      modifiedAt:
+        item.updated_at ?? item.created_at ?? new Date(0).toISOString(),
       type: isDirectory ? "folder" : extension || "file",
     };
   });

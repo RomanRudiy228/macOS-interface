@@ -33,9 +33,7 @@ export async function searchUsers(query: string): Promise<UserProfile[]> {
       .from("profiles")
       .select("id, username, email, avatar_url")
       .neq("id", currentUser.id) // Exclude current user
-      .or(
-        `username.ilike.%${query}%,email.ilike.%${query}%`
-      );
+      .or(`username.ilike.%${query}%,email.ilike.%${query}%`);
 
     if (error) {
       console.error("Error searching users:", error);

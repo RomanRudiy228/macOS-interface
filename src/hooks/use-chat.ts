@@ -1,21 +1,32 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getConversations,
   getOrCreateConversation,
   type ConversationWithUser,
 } from "@/actions/conversations-get";
-import { getMessages, sendMessage, type MessageWithProfile } from "@/actions/messages-get";
-import { searchUsers, getAllUsers, type UserProfile } from "@/actions/users-search";
+import {
+  getMessages,
+  sendMessage,
+  type MessageWithProfile,
+} from "@/actions/messages-get";
+import {
+  searchUsers,
+  getAllUsers,
+  type UserProfile,
+} from "@/actions/users-search";
 import { createClient } from "@/supabase/client";
 
 export function useChat() {
-  const [conversations, setConversations] = useState<ConversationWithUser[]>([]);
+  const [conversations, setConversations] = useState<ConversationWithUser[]>(
+    []
+  );
   const [selectedConversationId, setSelectedConversationId] = useState<
     string | null
   >(null);
   const [messages, setMessages] = useState<MessageWithProfile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // User search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,22 +34,119 @@ export function useChat() {
   const [isSearching, setIsSearching] = useState(false);
   const [showUserSearch, setShowUserSearch] = useState(false);
 
-  // Load conversations on mount
+  const loadConversations = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await getConversations();
+      setConversations(data);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load conversations";
+      setError(errorMessage);
+      console.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const loadMessages = useCallback(async (conversationId: string) => {
+    try {
+      setError(null);
+      const data = await getMessages(conversationId);
+      setMessages(data);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load messages";
+      setError(errorMessage);
+      console.error(errorMessage);
+    }
+  }, []);
+
+  const handleUserSearch = useCallback(async (query: string) => {
+    try {
+      setIsSearching(true);
+      setError(null);
+      if (query.trim()) {
+        const results = await searchUsers(query);
+        setSearchResults(results);
+      } else {
+        const results = await getAllUsers();
+        setSearchResults(results);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to search users";
+      setError(errorMessage);
+      console.error(errorMessage);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  const startConversation = useCallback(
+    async (userId: string) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const conversation = await getOrCreateConversation(userId);
+        setSelectedConversationId(conversation.id);
+        await loadConversations();
+        setShowUserSearch(false);
+        setSearchQuery("");
+        setSearchResults([]);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to start conversation";
+        setError(errorMessage);
+        console.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [loadConversations]
+  );
+
+  const openUserSearch = useCallback(async () => {
+    try {
+      setShowUserSearch(true);
+      setSearchQuery("");
+      const results = await getAllUsers();
+      setSearchResults(results);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load users";
+      setError(errorMessage);
+    }
+  }, []);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth
+      .getUser()
+      .then(({ data: { user } }) => {
+        if (user) {
+          setCurrentUserId(user.id);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     loadConversations();
-  }, []);
+  }, [loadConversations]);
 
   // Realtime subscription for conversations
   useEffect(() => {
     const supabase = createClient();
     const channel = supabase
-      .channel('conversations')
+      .channel("conversations")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'conversations',
+          event: "UPDATE",
+          schema: "public",
+          table: "conversations",
         },
         () => {
           // Reload conversations when any conversation is updated
@@ -50,7 +158,7 @@ export function useChat() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [loadConversations]);
 
   // Load messages when conversation changes
   useEffect(() => {
@@ -67,47 +175,47 @@ export function useChat() {
     const channel = supabase
       .channel(`messages:${selectedConversationId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
           filter: `conversation_id=eq.${selectedConversationId}`,
         },
         async (payload) => {
           // Fetch the new message with profile
           const { data: message, error } = await supabase
-            .from('messages')
-            .select('*')
-            .eq('id', payload.new.id)
+            .from("messages")
+            .select("*")
+            .eq("id", payload.new.id)
             .single();
 
           if (error) {
-            console.error('Error fetching new message:', error);
+            console.error("Error fetching new message:", error);
             return;
           }
 
           // Get sender profile
           const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('username, avatar_url')
-            .eq('id', message.sender_id)
+            .from("profiles")
+            .select("username, avatar_url")
+            .eq("id", message.sender_id)
             .single();
 
           if (profileError) {
-            console.error('Error fetching profile:', profileError);
+            console.error("Error fetching profile:", profileError);
           }
 
           const messageWithProfile: MessageWithProfile = {
             ...message,
             senderProfile: {
-              username: profile?.username || 'Unknown',
+              username: profile?.username || "Unknown",
               avatar_url: profile?.avatar_url || null,
             },
           };
 
           // Add new message to state
-          setMessages(prev => [...prev, messageWithProfile]);
+          setMessages((prev) => [...prev, messageWithProfile]);
 
           // Reload conversations to update last message
           loadConversations();
@@ -131,36 +239,7 @@ export function useChat() {
     }, 300);
 
     return () => clearTimeout(searchTimer);
-  }, [searchQuery]);
-
-  const loadConversations = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await getConversations();
-      setConversations(data);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load conversations";
-      setError(errorMessage);
-      console.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const loadMessages = async (conversationId: string) => {
-    try {
-      setError(null);
-      const data = await getMessages(conversationId);
-      setMessages(data);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load messages";
-      setError(errorMessage);
-      console.error(errorMessage);
-    }
-  };
+  }, [searchQuery, handleUserSearch]);
 
   const handleSendMessage = async (content: string) => {
     if (!selectedConversationId || !content.trim()) return;
@@ -170,7 +249,7 @@ export function useChat() {
       const newMessage = await sendMessage(selectedConversationId, content);
       if (newMessage) {
         // Add the new message to state immediately
-        setMessages(prev => [...prev, newMessage]);
+        setMessages((prev) => [...prev, newMessage]);
         // Reload conversations to update "last message"
         await loadConversations();
       }
@@ -182,66 +261,13 @@ export function useChat() {
     }
   };
 
-  const handleUserSearch = async (query: string) => {
-    try {
-      setIsSearching(true);
-      setError(null);
-      if (query.trim()) {
-        const results = await searchUsers(query);
-        setSearchResults(results);
-      } else {
-        const results = await getAllUsers();
-        setSearchResults(results);
-      }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to search users";
-      setError(errorMessage);
-      console.error(errorMessage);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const startConversation = async (userId: string) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const conversation = await getOrCreateConversation(userId);
-      setSelectedConversationId(conversation.id);
-      await loadConversations();
-      setShowUserSearch(false);
-      setSearchQuery("");
-      setSearchResults([]);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to start conversation";
-      setError(errorMessage);
-      console.error(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const openUserSearch = async () => {
-    try {
-      setShowUserSearch(true);
-      setSearchQuery("");
-      const results = await getAllUsers();
-      setSearchResults(results);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to load users";
-      setError(errorMessage);
-    }
-  };
-
   return {
     conversations,
     selectedConversationId,
     messages,
     isLoading,
     error,
+    currentUserId,
     setSelectedConversationId,
     handleSendMessage,
     startConversation,

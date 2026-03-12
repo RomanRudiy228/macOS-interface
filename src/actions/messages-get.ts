@@ -57,7 +57,7 @@ export async function getMessages(
     }
 
     // Map profiles to messages
-    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
     return messages.map((msg): MessageWithProfile => {
       const profile = profileMap.get(msg.sender_id);

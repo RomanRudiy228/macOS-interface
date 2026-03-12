@@ -19,18 +19,19 @@ export async function setWallpaperId(wallpaperId: string): Promise<void> {
       .maybeSingle();
 
     if (!row) {
-      await supabase
-        .from("settings")
-        .insert({
-          user_id: user.id,
-          wallpaper_id: wallpaperId,
-          theme: "dark",
-          system_color: "blue",
-        });
+      await supabase.from("settings").insert({
+        user_id: user.id,
+        wallpaper_id: wallpaperId,
+        theme: "dark",
+        system_color: "blue",
+      });
       return;
     }
 
-    await supabase.from("settings").update({ wallpaper_id: wallpaperId }).eq("id", row.id);
+    await supabase
+      .from("settings")
+      .update({ wallpaper_id: wallpaperId })
+      .eq("id", row.id);
   } catch {
     // ignore
   }

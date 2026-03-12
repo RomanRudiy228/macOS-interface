@@ -69,7 +69,8 @@ type SidebarItem = {
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024 * 1024)
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
 }
 
@@ -99,7 +100,9 @@ function isPreviewableTextContentType(contentType: string): boolean {
 }
 
 function isCsvContentType(contentType: string): boolean {
-  return contentType.includes("text/csv") || contentType.includes("application/csv");
+  return (
+    contentType.includes("text/csv") || contentType.includes("application/csv")
+  );
 }
 
 function parseCsvRows(content: string): string[][] {
@@ -115,7 +118,11 @@ const FinderFolderGlyph: React.FC<{ size?: number }> = ({ size = 56 }) => {
   const bodyHeight = Math.round(size * 0.72);
 
   return (
-    <span className="relative block" style={{ width: size, height: size }} aria-hidden>
+    <span
+      className="relative block"
+      style={{ width: size, height: size }}
+      aria-hidden
+    >
       <span
         className="absolute left-[12%] top-[7%] rounded-t-md"
         style={{
@@ -258,12 +265,16 @@ export const FinderWindow: React.FC = () => {
     setIsOpeningFile(true);
 
     try {
-      const response = await fetch(getFilePreviewSrc(entry.relativePath, source));
+      const response = await fetch(
+        getFilePreviewSrc(entry.relativePath, source)
+      );
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      const contentType = (response.headers.get("content-type") || "").toLowerCase();
+      const contentType = (
+        response.headers.get("content-type") || ""
+      ).toLowerCase();
       setOpenedFileContentType(contentType);
 
       if (isPreviewableTextContentType(contentType)) {
@@ -549,7 +560,9 @@ export const FinderWindow: React.FC = () => {
                     <Icon
                       size={14}
                       className={
-                        isDark ? "text-[hsl(var(--primary))]" : "text-[hsl(var(--primary))]"
+                        isDark
+                          ? "text-[hsl(var(--primary))]"
+                          : "text-[hsl(var(--primary))]"
                       }
                     />
                     {item.label}
@@ -558,7 +571,6 @@ export const FinderWindow: React.FC = () => {
               );
             })}
           </ul>
-
         </aside>
 
         <div
@@ -654,7 +666,10 @@ export const FinderWindow: React.FC = () => {
 
                 <div className="flex flex-1 items-center justify-center px-8 py-6">
                   <img
-                    src={getFilePreviewSrc(previewImageEntry.relativePath, source)}
+                    src={getFilePreviewSrc(
+                      previewImageEntry.relativePath,
+                      source
+                    )}
                     alt={previewImageEntry.name}
                     className="max-h-[360px] max-w-full rounded-md object-contain shadow-[0_10px_25px_rgba(0,0,0,0.22)]"
                   />
@@ -702,7 +717,10 @@ export const FinderWindow: React.FC = () => {
               >
                 <div className="mb-4 flex items-start gap-3">
                   <img
-                    src={getFilePreviewSrc(previewImageEntry.relativePath, source)}
+                    src={getFilePreviewSrc(
+                      previewImageEntry.relativePath,
+                      source
+                    )}
                     alt={previewImageEntry.name}
                     className="h-10 w-10 rounded object-cover"
                   />
@@ -769,15 +787,24 @@ export const FinderWindow: React.FC = () => {
                       : "border-black/10 text-[#7a7e86]"
                   }`}
                 >
-                  <button type="button" className="flex flex-col items-center gap-1">
+                  <button
+                    type="button"
+                    className="flex flex-col items-center gap-1"
+                  >
                     <RotateCcw size={14} />
                     Rotate Left
                   </button>
-                  <button type="button" className="flex flex-col items-center gap-1">
+                  <button
+                    type="button"
+                    className="flex flex-col items-center gap-1"
+                  >
                     <Pencil size={14} />
                     Markup
                   </button>
-                  <button type="button" className="flex flex-col items-center gap-1">
+                  <button
+                    type="button"
+                    className="flex flex-col items-center gap-1"
+                  >
                     <Ellipsis size={14} />
                     More...
                   </button>
@@ -791,154 +818,161 @@ export const FinderWindow: React.FC = () => {
             !previewImageEntry &&
             viewMode === "list" &&
             filteredEntries.length > 0 && (
-            <div className="text-[13px]">
-              <div
-                className={`sticky top-0 z-[2] grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_90px_90px] border-b px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide backdrop-blur ${
-                  isDark
-                    ? "border-white/10 bg-black/20 text-[#9aa5b8]"
-                    : "border-black/10 bg-white/70 text-[#7c8087]"
-                }`}
-              >
-                <span>Name</span>
-                <span>Date Modified</span>
-                <span className="text-right">Size</span>
-                <span className="text-right">Kind</span>
-              </div>
-              <ul>
-                {filteredEntries.map((entry) => {
-                  const isSelected = selectedPath === entry.relativePath;
-                  return (
-                    <li key={entry.relativePath}>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPath(entry.relativePath)}
-                        onDoubleClick={() => activateEntry(entry)}
-                        className={`grid w-full grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_90px_90px] items-center gap-2 border-b px-3 py-1.5 text-left ${
-                          isSelected
-                            ? isDark
-                              ? "bg-[hsl(var(--primary)/0.35)] border-white/5"
-                              : "bg-[hsl(var(--primary)/0.16)] border-black/10"
-                            : isDark
-                              ? "border-white/5 hover:bg-white/5"
-                              : "border-black/5 hover:bg-black/[0.03]"
-                        }`}
-                      >
-                        <span className="flex min-w-0 items-center gap-2">
-                          {entry.isDirectory ? (
+              <div className="text-[13px]">
+                <div
+                  className={`sticky top-0 z-[2] grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_90px_90px] border-b px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide backdrop-blur ${
+                    isDark
+                      ? "border-white/10 bg-black/20 text-[#9aa5b8]"
+                      : "border-black/10 bg-white/70 text-[#7c8087]"
+                  }`}
+                >
+                  <span>Name</span>
+                  <span>Date Modified</span>
+                  <span className="text-right">Size</span>
+                  <span className="text-right">Kind</span>
+                </div>
+                <ul>
+                  {filteredEntries.map((entry) => {
+                    const isSelected = selectedPath === entry.relativePath;
+                    return (
+                      <li key={entry.relativePath}>
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPath(entry.relativePath)}
+                          onDoubleClick={() => activateEntry(entry)}
+                          className={`grid w-full grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_90px_90px] items-center gap-2 border-b px-3 py-1.5 text-left ${
+                            isSelected
+                              ? isDark
+                                ? "bg-[hsl(var(--primary)/0.35)] border-white/5"
+                                : "bg-[hsl(var(--primary)/0.16)] border-black/10"
+                              : isDark
+                                ? "border-white/5 hover:bg-white/5"
+                                : "border-black/5 hover:bg-black/[0.03]"
+                          }`}
+                        >
+                          <span className="flex min-w-0 items-center gap-2">
+                            {entry.isDirectory ? (
                               <Folder
                                 size={15}
                                 className="shrink-0 text-[hsl(var(--primary))]"
                               />
-                          ) : isImageEntry(entry) ? (
-                            <img
-                              src={getFilePreviewSrc(entry.relativePath, source)}
-                              alt={entry.name}
-                              loading="lazy"
-                              className="h-[18px] w-[18px] shrink-0 rounded-[4px] object-cover ring-1 ring-black/35"
-                            />
-                          ) : (
-                            <FileText
-                              size={15}
-                              className={`shrink-0 ${
-                                isDark ? "text-[#a5afc1]" : "text-[#8a8f97]"
+                            ) : isImageEntry(entry) ? (
+                              <img
+                                src={getFilePreviewSrc(
+                                  entry.relativePath,
+                                  source
+                                )}
+                                alt={entry.name}
+                                loading="lazy"
+                                className="h-[18px] w-[18px] shrink-0 rounded-[4px] object-cover ring-1 ring-black/35"
+                              />
+                            ) : (
+                              <FileText
+                                size={15}
+                                className={`shrink-0 ${
+                                  isDark ? "text-[#a5afc1]" : "text-[#8a8f97]"
+                                }`}
+                              />
+                            )}
+                            <span
+                              className={`truncate ${
+                                isDark ? "text-[#e3ebf7]" : "text-[#2f3238]"
                               }`}
-                            />
-                          )}
+                            >
+                              {entry.name}
+                            </span>
+                          </span>
                           <span
                             className={`truncate ${
-                              isDark ? "text-[#e3ebf7]" : "text-[#2f3238]"
+                              isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
                             }`}
                           >
-                            {entry.name}
+                            {formatDate(entry.modifiedAt)}
                           </span>
-                        </span>
-                        <span
-                          className={`truncate ${
-                            isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
-                          }`}
-                        >
-                          {formatDate(entry.modifiedAt)}
-                        </span>
-                        <span
-                          className={`text-right ${
-                            isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
-                          }`}
-                        >
-                          {entry.isDirectory ? "-" : formatFileSize(entry.size)}
-                        </span>
-                        <span
-                          className={`text-right ${
-                            isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
-                          }`}
-                        >
-                          {entry.isDirectory ? "Folder" : entry.type}
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
+                          <span
+                            className={`text-right ${
+                              isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
+                            }`}
+                          >
+                            {entry.isDirectory
+                              ? "-"
+                              : formatFileSize(entry.size)}
+                          </span>
+                          <span
+                            className={`text-right ${
+                              isDark ? "text-[#c0cadb]" : "text-[#6c7078]"
+                            }`}
+                          >
+                            {entry.isDirectory ? "Folder" : entry.type}
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
 
           {!error &&
             !isLoading &&
             !previewImageEntry &&
             viewMode === "icons" &&
             filteredEntries.length > 0 && (
-            <ul className="grid auto-rows-max grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-x-6 gap-y-4 p-6">
-              {filteredEntries.map((entry) => {
-                const isSelected = selectedPath === entry.relativePath;
+              <ul className="grid auto-rows-max grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-x-6 gap-y-4 p-6">
+                {filteredEntries.map((entry) => {
+                  const isSelected = selectedPath === entry.relativePath;
 
-                return (
-                  <li key={entry.relativePath} className="justify-self-start">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedPath(entry.relativePath)}
-                      onDoubleClick={() => activateEntry(entry)}
-                      className={`flex w-[116px] flex-col items-center rounded-lg px-2 py-2 ${
-                        isSelected
-                          ? isDark
-                            ? "bg-white/10"
-                            : "bg-[hsl(var(--primary)/0.14)]"
-                          : isDark
-                            ? "hover:bg-white/5"
-                            : "hover:bg-black/[0.03]"
-                      }`}
-                    >
-                      {entry.isDirectory ? (
-                        <FinderFolderGlyph />
-                      ) : isImageEntry(entry) ? (
-                        <img
-                          src={getFilePreviewSrc(entry.relativePath, source)}
-                          alt={entry.name}
-                          loading="lazy"
-                          className="h-[54px] w-[54px] rounded-md object-cover ring-1 ring-black/35"
-                        />
-                      ) : (
-                          <FileText
-                            size={48}
-                            className={isDark ? "text-[#b1bbcc]" : "text-[#9a9ea5]"}
-                          />
-                      )}
-
-                      <span
-                        className={`mt-1 max-w-full truncate rounded px-1.5 py-[1px] text-[13px] ${
+                  return (
+                    <li key={entry.relativePath} className="justify-self-start">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPath(entry.relativePath)}
+                        onDoubleClick={() => activateEntry(entry)}
+                        className={`flex w-[116px] flex-col items-center rounded-lg px-2 py-2 ${
                           isSelected
-                            ? "bg-[hsl(var(--primary))] text-white"
+                            ? isDark
+                              ? "bg-white/10"
+                              : "bg-[hsl(var(--primary)/0.14)]"
                             : isDark
-                              ? "text-[#edf3ff]"
-                              : "text-[#34363b]"
+                              ? "hover:bg-white/5"
+                              : "hover:bg-black/[0.03]"
                         }`}
                       >
-                        {entry.name}
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                        {entry.isDirectory ? (
+                          <FinderFolderGlyph />
+                        ) : isImageEntry(entry) ? (
+                          <img
+                            src={getFilePreviewSrc(entry.relativePath, source)}
+                            alt={entry.name}
+                            loading="lazy"
+                            className="h-[54px] w-[54px] rounded-md object-cover ring-1 ring-black/35"
+                          />
+                        ) : (
+                          <FileText
+                            size={48}
+                            className={
+                              isDark ? "text-[#b1bbcc]" : "text-[#9a9ea5]"
+                            }
+                          />
+                        )}
+
+                        <span
+                          className={`mt-1 max-w-full truncate rounded px-1.5 py-[1px] text-[13px] ${
+                            isSelected
+                              ? "bg-[hsl(var(--primary))] text-white"
+                              : isDark
+                                ? "text-[#edf3ff]"
+                                : "text-[#34363b]"
+                          }`}
+                        >
+                          {entry.name}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
         </div>
       </div>
 
@@ -950,7 +984,8 @@ export const FinderWindow: React.FC = () => {
         }`}
       >
         <p className="flex-1 text-center">
-          {selectedCount} of {filteredEntries.length} selected, 42.05 GB available
+          {selectedCount} of {filteredEntries.length} selected, 42.05 GB
+          available
         </p>
         <input
           type="range"

@@ -42,7 +42,7 @@ function hasTraversalSegments(relativePath: string): boolean {
 
 function resolveInsideRoot(relativePath: string): string | null {
   const resolved = path.resolve(FINDER_ROOT, relativePath);
-  if (resolved === FINDER_ROOT) return null;
+  if (resolved === FINDER_ROOT) return resolved;
   if (!resolved.startsWith(`${FINDER_ROOT}${path.sep}`)) return null;
   return resolved;
 }
@@ -107,7 +107,10 @@ async function getServerFile(requestedPath: string) {
 
 async function getUserFile(requestedPath: string) {
   if (!requestedPath) {
-    return NextResponse.json({ error: "File path is required." }, { status: 400 });
+    return NextResponse.json(
+      { error: "File path is required." },
+      { status: 400 }
+    );
   }
 
   const cookieStore = await cookies();
@@ -133,7 +136,8 @@ async function getUserFile(requestedPath: string) {
   }
 
   const extension = path.extname(requestedPath).toLowerCase();
-  const contentType = data.type || MIME_BY_EXTENSION[extension] || "application/octet-stream";
+  const contentType =
+    data.type || MIME_BY_EXTENSION[extension] || "application/octet-stream";
   const bytes = await data.arrayBuffer();
 
   return new NextResponse(bytes, {

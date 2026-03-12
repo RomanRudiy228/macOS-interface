@@ -13,6 +13,7 @@ export interface ConversationWithUser extends Conversation {
     email: string;
     avatar_url: string | null;
   };
+  lastMessageContent: string | null;
 }
 
 export async function getConversations(): Promise<ConversationWithUser[]> {
@@ -41,8 +42,10 @@ export async function getConversations(): Promise<ConversationWithUser[]> {
     }
 
     // Fetch profiles for conversations
-    const otherUserIds = conversations.map((conv) => 
-      conv.participant_1_id === user.id ? conv.participant_2_id : conv.participant_1_id
+    const otherUserIds = conversations.map((conv) =>
+      conv.participant_1_id === user.id
+        ? conv.participant_2_id
+        : conv.participant_1_id
     );
 
     const { data: profiles, error: profileError } = await supabase
@@ -55,21 +58,49 @@ export async function getConversations(): Promise<ConversationWithUser[]> {
       return [];
     }
 
-    // Map profiles to conversations
-    const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+    const conversationIds = conversations.map((conv) => conv.id);
+    const { data: messages, error: messagesError } = await supabase
+      .from("messages")
+      .select("conversation_id, content, created_at")
+      .in("conversation_id", conversationIds)
+      .order("created_at", { ascending: false });
+
+    const lastMessageByConversation = new Map<string, string>();
+    if (!messagesError && messages) {
+      for (const message of messages as {
+        conversation_id: string;
+        content: string;
+        created_at: string | null;
+      }[]) {
+        if (!lastMessageByConversation.has(message.conversation_id)) {
+          lastMessageByConversation.set(
+            message.conversation_id,
+            message.content
+          );
+        }
+      }
+    } else if (messagesError) {
+      console.error("Error fetching last messages:", messagesError);
+    }
+
+    const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
     return conversations.map((conv): ConversationWithUser => {
-      const otherUserId = conv.participant_1_id === user.id ? conv.participant_2_id : conv.participant_1_id;
+      const otherUserId =
+        conv.participant_1_id === user.id
+          ? conv.participant_2_id
+          : conv.participant_1_id;
       const profile = profileMap.get(otherUserId);
 
       return {
         ...conv,
         otherUserProfile: profile || {
           id: otherUserId,
-          username: 'Unknown',
-          email: 'unknown@example.com',
+          username: "Unknown",
+          email: "unknown@example.com",
           avatar_url: null,
         },
+        lastMessageContent: lastMessageByConversation.get(conv.id) ?? null,
       };
     });
   } catch (error) {
@@ -78,9 +109,11 @@ export async function getConversations(): Promise<ConversationWithUser[]> {
   }
 }
 
-export async function getOrCreateConversation(otherUserId: string): Promise<Conversation> {
+export async function getOrCreateConversation(
+  otherUserId: string
+): Promise<Conversation> {
   try {
-    if (!otherUserId || typeof otherUserId !== 'string') {
+    if (!otherUserId || typeof otherUserId !== "string") {
       throw new Error("Invalid user ID");
     }
 
