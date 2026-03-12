@@ -30,14 +30,6 @@ export const MessagesWindow: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  useEffect(() => {
-    const unreadCount = messages.filter(
-      (m) => m.sender_id !== currentUserId
-    ).length;
-    document.title =
-      unreadCount > 0 ? `(${unreadCount}) My Chat App` : "My Chat App";
-  }, [messages, currentUserId]);
-
   const handleSendClick = async () => {
     if (!messageInput.trim()) return;
     try {
