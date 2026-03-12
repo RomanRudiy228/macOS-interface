@@ -4,17 +4,38 @@ A macOS-style web interface: dock, menu bar, control center, app windows, and wa
 
 **Live:** [macos-interface.vercel.app](https://macos-interface.vercel.app) (Vercel)
 
-## Features
+## Main Features
 
-- **Menu bar** — Apple logo, control center, date/time
-- **Apple menu** — macOS-style dropdown with working **Log Out**
-- **Control Center** — Dark/Light mode toggle, system accent color picker, Wallpaper button with selected wallpaper preview and opens the wallpapers window
-- **Dock** — App icons (Finder, Safari, Notes, Settings, Launchpad, etc.), drag-and-drop to reorder (@dnd-kit), click to open/minimize/restore windows
-- **Wallpapers** — Desktop background picker; data from Supabase or local fallback; selected wallpaper persisted in settings
-- **App windows** — Standard windows (title bar, close/minimize) for Wallpapers; full-screen Launchpad with search; dark/light theme support in all windows
-- **Auth flow** — Register/Login screens, password visibility toggle, confirm-password validation, remembered user on login screen
-- **User profile** — `profiles` table sync (username, email, avatar), avatar upload to Supabase Storage (`avatars`)
-- **Per-user settings** — Theme, system color, and wallpaper are stored per user (`settings.user_id`)
+- **Auth flow**
+  - `/login` and `/register` pages with lock‑screen‑style UI.
+  - Supabase email/password auth, profile syncing (username, avatar).
+  - Remembered user info on the login screen.
+
+- **Desktop & windows**
+  - `DesktopPage` (`src/app/page.tsx`) renders the main desktop once the user is authenticated.
+  - **Menubar**, **Dock**, **Windows layer** and **Wallpaper provider** mimic macOS behavior.
+  - Windows layer (`windows-layer.tsx`) manages app windows (Finder, Settings/Wallpapers, Messages, Launchpad) via a central context.
+
+- **Finder demo**
+  - API routes under `src/app/api/finder/*` provide a **Finder‑like file browser**.
+  - Supports two sources:
+    - **server**: reads from `server-files/finder-demo` on disk (safe, no path traversal).
+    - **user**: reads from a Supabase storage bucket (per‑user root under `users/{userId}`).
+  - Sorting, type detection, and seed demo files for new users are implemented on the server.
+
+- **Widgets**
+  - **Clock widget** and **Weather widget** rendered on top of the desktop.
+  - Weather uses `useWeather` hook and `NEXT_PUBLIC_WEATHER_KEY` (OpenWeather‑compatible API key).
+  - Widgets are **draggable**, with collision avoidance and screen bounds.
+  - **Optimistic persistence**: positions are saved via Supabase table `widget_positions`; on failure, UI rolls back to the previous position.
+
+- **Chat / Messages**
+  - Supabase tables `conversations` and `messages` are used for a simple messaging experience.
+  - Server actions:
+    - `getConversations`, `getOrCreateConversation`
+    - `getMessages`, `sendMessage`, `deleteMessage`
+    - `searchUsers`, `getAllUsers`
+  - Each conversation is scoped to the authenticated user; message sender profiles are joined from `profiles`.
 
 ## Tech stack
 
@@ -35,6 +56,8 @@ Create a `.env` file in the project root:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://<project-ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-anon-key>
+NEXT_PUBLIC_WEATHER_KEY=... # OpenWeather‑style API key
+NEXT_PUBLIC_FINDER_STORAGE_BUCKET=finder-files # optional, default used in code
 ```
 
 Get these from [Supabase Dashboard](https://supabase.com/dashboard) → your project → **Settings** → **API**.
@@ -62,17 +85,17 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-|--------|-------------|
-| `yarn dev` | Start dev server |
-| `yarn build` | Build for production |
-| `yarn start` | Start production server |
-| `yarn lint` | Run ESLint |
-| `yarn lint:fix` | Run ESLint with auto-fix |
-| `yarn format` | Format with Prettier |
-| `yarn format:check` | Check formatting |
-| `yarn typecheck` | Run TypeScript type check |
-| `yarn db:types` | Generate Supabase types (requires `SUPABASE_DB_URL`) |
+| Command               | Description                                           |
+| --------------------- | ----------------------------------------------------- |
+| `yarn dev`            | Start dev server                                      |
+| `yarn build`          | Build for production                                  |
+| `yarn start`          | Start production server                               |
+| `yarn lint`           | Run ESLint                                            |
+| `yarn lint:fix`       | Run ESLint with auto-fix                              |
+| `yarn format`         | Format with Prettier                                  |
+| `yarn format:check`   | Check formatting                                      |
+| `yarn typecheck`      | Run TypeScript type check                             |
+| `yarn db:types`       | Generate Supabase types (requires `SUPABASE_DB_URL`)  |
 | `yarn db:types:local` | Generate types from local Supabase (`supabase start`) |
 
 ## Project structure
@@ -81,9 +104,11 @@ Open [http://localhost:3000](http://localhost:3000).
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx         # Root layout, providers, WallpaperProvider, WindowsProvider
-│   │   ├── page.tsx           # Desktop page
+│   │   ├── page.tsx           # Desktop page with windows + widgets
 │   │   ├── (auth)/login/page.tsx
 │   │   ├── (auth)/register/page.tsx
+│   │   ├── api/finder/files/route.ts # Finder: directory listing (server + user storage)
+│   │   ├── api/finder/file/route.ts  # Finder: file download/preview (server + user storage)
 │   │   └── globals.css        # Tailwind, CSS variables, launchpad/auth input autofill styles
 │   ├── components/
 │   │   ├── control-center/ # Control Center (Popover: theme, color, wallpaper)
@@ -93,7 +118,8 @@ Open [http://localhost:3000](http://localhost:3000).
 │   │   ├── menu-bar/       # Menu bar (Apple, Control Center, date)
 │   │   ├── popover/        # Radix Popover wrapper
 │   │   ├── tooltip/        # Tooltip
-│   │   └── windows-layer/  # Windows layer: AppWindow, WallpapersWindow, LaunchpadWindow
+│   │   ├── widgets/        # Desktop widgets (clock, weather, draggable positions)
+│   │   └── windows-layer/  # Windows layer: AppWindow, FinderWindow, WallpapersWindow, MessagesWindow, LaunchpadWindow
 │   ├── contexts/
 │   │   ├── windows-context.tsx  # Open windows, active, minimize, restore
 │   │   └── wallpaper-context.tsx # Wallpapers list, selected, setSelectedWallpaperId
@@ -104,7 +130,7 @@ Open [http://localhost:3000](http://localhost:3000).
 │   │   ├── use-register-submit.ts
 │   │   ├── use-app-window-drag.ts
 │   │   └── use-window-minimize-transition.ts
-│   ├── actions/               # Server actions: wallpapers/settings/dock/profile
+│   ├── actions/               # Server actions: wallpapers/settings/dock/profile/widgets/messages/users
 │   ├── const/              # Constants: dock order, wallpapers fallback
 │   ├── types/              # Types: dock, wallpaper, window, settings
 │   ├── utils/              # theme-utilis, get-wallpaper, date, get-scale
@@ -128,7 +154,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Supabase
 
-- **Tables:** `apps`, `dock_items`, `wallpapers`, `profiles`, `settings`.
+- **Tables:** `apps`, `dock_items`, `wallpapers`, `profiles`, `settings`, `widget_positions`, `conversations`, `messages`.
 - **Profiles:** synced from `auth.users` via DB trigger (`create_profiles.sql`), avatar URL/path stored in `profiles`.
 - **Dock seed:** new users get default dock items from template rows (`dock_items.user_id is null`) via trigger (`create_dock_seed_trigger.sql`).
 - **Settings seed:** each user gets per-user settings row via trigger (`create_user_settings.sql`), defaults: `theme=dark`, `system_color=blue`.

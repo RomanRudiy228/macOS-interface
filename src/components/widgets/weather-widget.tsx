@@ -3,9 +3,23 @@
 import { useWeather } from "@/hooks/use-weather";
 
 export const WeatherWidget = () => {
-  const { weather, loading, error, locationDenied } = useWeather(
-    process.env.NEXT_PUBLIC_WEATHER_KEY!
-  );
+  const apiKey = process.env.NEXT_PUBLIC_WEATHER_KEY;
+  const { weather, loading, error, locationDenied } = useWeather(apiKey ?? "");
+
+  if (!apiKey) {
+    return (
+      <div className="w-40 h-40 rounded-[36px] bg-white/20 backdrop-blur-2xl p-5 flex items-center justify-center text-white text-sm text-center">
+        <div className="space-y-1 px-1">
+          <p className="text-sm font-semibold leading-snug">
+            Weather unavailable
+          </p>
+          <p className="text-xs opacity-80 leading-snug">
+            Set NEXT_PUBLIC_WEATHER_KEY to enable the weather widget.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

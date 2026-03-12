@@ -11,7 +11,7 @@ interface WidgetWrapperProps {
   initialPosition?: { x: number; y: number } | null;
   allWidgets: Rect[];
   onPositionUpdate: (rect: Rect) => void;
-  onPersist?: (id: string, x: number, y: number) => void;
+  onPersist?: (id: string, x: number, y: number) => Promise<void> | void;
 }
 
 export const WidgetWrapper = ({
@@ -66,12 +66,13 @@ export const WidgetWrapper = ({
     onPositionUpdate({ id, ...position, width, height });
   }, [isLoaded, position.x, position.y, id, onPositionUpdate]);
 
-  const handleDragEnd = (
+  const handleDragEnd = async (
     _: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
   ) => {
     if (!containerRef.current) return;
 
+    const previousPosition = { ...position };
     const { width, height } = containerRef.current.getBoundingClientRect();
     const boardWidth = window.innerWidth;
     const boardHeight = window.innerHeight;
@@ -167,7 +168,26 @@ export const WidgetWrapper = ({
       width,
       height,
     });
-    onPersist?.(id, finalCoords.x, finalCoords.y);
+
+    if (onPersist) {
+      try {
+        await onPersist(id, finalCoords.x, finalCoords.y);
+      } catch (error) {
+        console.error("Failed to persist widget position", error);
+
+        setPosition(previousPosition);
+
+        const rollbackRect: Rect = {
+          id,
+          x: previousPosition.x,
+          y: previousPosition.y,
+          width,
+          height,
+        };
+
+        onPositionUpdate(rollbackRect);
+      }
+    }
   };
 
   if (!isLoaded) return null;

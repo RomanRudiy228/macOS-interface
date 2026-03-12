@@ -64,10 +64,17 @@ export const LoginForm = () => {
       </div>
 
       {submitError ? (
-        <p className="whitespace-nowrap pl-2 text-[11px] text-white/90">{submitError}</p>
+        <p className="whitespace-nowrap pl-2 text-[11px] text-white/90">
+          {submitError}
+        </p>
       ) : null}
 
-      <button type="submit" className="hidden" disabled={isSubmitting} aria-hidden />
+      <button
+        type="submit"
+        className="hidden"
+        disabled={isSubmitting}
+        aria-hidden
+      />
     </form>
   );
 };

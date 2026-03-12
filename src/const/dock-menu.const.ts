@@ -1,4 +1,3 @@
-
 export const DEFAULT_DOCK_ORDER = [
   "finder",
   "safari",

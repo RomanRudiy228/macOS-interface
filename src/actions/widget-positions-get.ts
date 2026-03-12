@@ -13,7 +13,8 @@ export async function getWidgetPositions() {
 
   const { data, error } = await supabase
     .from("widget_positions")
-    .select("widget_id,x,y");
+    .select("widget_id,x,y")
+    .eq("user_id", user.id);
 
   if (error) throw new Error(error.message);
   return data ?? [];

@@ -171,7 +171,10 @@ export const Menubar = () => {
         </div>
 
         <ControlCenter>
-          <button className="hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5 transition-colors opacity-90 data-[state=open]:bg-black/10 dark:data-[state=open]:bg-white/10">
+          <button
+            type="button"
+            className="hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5 transition-colors opacity-90 data-[state=open]:bg-black/10 dark:data-[state=open]:bg-white/10"
+          >
             <svg
               width="18"
               height="18"

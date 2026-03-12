@@ -33,7 +33,10 @@ export const RegisterForm = () => {
 
   const selectedAvatar = watch("avatar");
   const avatarPreviewUrl = useMemo(
-    () => (selectedAvatar instanceof File ? URL.createObjectURL(selectedAvatar) : null),
+    () =>
+      selectedAvatar instanceof File
+        ? URL.createObjectURL(selectedAvatar)
+        : null,
     [selectedAvatar]
   );
 
@@ -76,7 +79,10 @@ export const RegisterForm = () => {
           className="hidden"
           onChange={(event) => {
             const file = event.target.files?.[0];
-            setValue("avatar", file, { shouldValidate: true, shouldDirty: true });
+            setValue("avatar", file, {
+              shouldValidate: true,
+              shouldDirty: true,
+            });
           }}
         />
       </div>
@@ -96,7 +102,9 @@ export const RegisterForm = () => {
           className="auth-input h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.username ? (
-          <p className="pl-2 text-[11px] text-white/90">{errors.username.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">
+            {errors.username.message}
+          </p>
         ) : null}
       </div>
 
@@ -110,7 +118,9 @@ export const RegisterForm = () => {
           className="auth-input h-8 w-full rounded-full bg-white/10 px-3 text-[13px] font-medium text-white outline-none placeholder:text-white/70 focus:ring-white/35"
         />
         {errors.email ? (
-          <p className="pl-2 text-[11px] text-white/90">{errors.email.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">
+            {errors.email.message}
+          </p>
         ) : null}
       </div>
 
@@ -134,7 +144,9 @@ export const RegisterForm = () => {
           </button>
         </div>
         {errors.password ? (
-          <p className="pl-2 text-[11px] text-white/90">{errors.password.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">
+            {errors.password.message}
+          </p>
         ) : null}
       </div>
 
@@ -158,14 +170,25 @@ export const RegisterForm = () => {
           </button>
         </div>
         {errors.confirmPassword ? (
-          <p className="pl-2 text-[11px] text-white/90">{errors.confirmPassword.message}</p>
+          <p className="pl-2 text-[11px] text-white/90">
+            {errors.confirmPassword.message}
+          </p>
         ) : null}
       </div>
 
-      {submitError ? <p className="pl-2 text-[11px] text-white/90">{submitError}</p> : null}
-      {submitInfo ? <p className="pl-2 text-xs text-amber-100">{submitInfo}</p> : null}
+      {submitError ? (
+        <p className="pl-2 text-[11px] text-white/90">{submitError}</p>
+      ) : null}
+      {submitInfo ? (
+        <p className="pl-2 text-xs text-amber-100">{submitInfo}</p>
+      ) : null}
 
-      <button type="submit" className="hidden" disabled={isSubmitting} aria-hidden />
+      <button
+        type="submit"
+        className="hidden"
+        disabled={isSubmitting}
+        aria-hidden
+      />
     </form>
   );
 };

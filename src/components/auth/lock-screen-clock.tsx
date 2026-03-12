@@ -19,7 +19,9 @@ export const LockScreenClock = () => {
 
   return (
     <header className="pointer-events-none absolute left-1/2 top-20 z-10 -translate-x-1/2 text-center text-white">
-      <p className="text-3xl font-medium tracking-tight text-white/90">{dateLabel}</p>
+      <p className="text-3xl font-medium tracking-tight text-white/90">
+        {dateLabel}
+      </p>
       <p className="bg-gradient-to-b from-white/95 to-white/55 bg-clip-text text-8xl font-semibold leading-none tracking-tight text-transparent">
         {timeLabel}
       </p>

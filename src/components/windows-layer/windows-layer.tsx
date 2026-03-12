@@ -4,16 +4,17 @@ import React, { useEffect, useState } from "react";
 import { AppWindow } from "@/components/windows-layer/app-window";
 import { WallpapersWindow } from "@/components/windows-layer/wallpapers-window";
 import { LaunchpadWindow } from "@/components/windows-layer/launchpad-window";
+import { MessagesWindow } from "@/components/windows-layer/messages-window";
+import { FinderWindow } from "@/components/windows-layer/finder-window";
 import { useWindows } from "@/contexts";
 import { getApps } from "@/actions";
 import type { LaunchpadApp } from "@/components/windows-layer/launchpad-window/launchpad-window";
 
-const WINDOW_CONTENT: Record<
-  string,
-  React.ReactNode
-> = {
+const WINDOW_CONTENT: Record<string, React.ReactNode> = {
+  finder: <FinderWindow />,
   settings: <WallpapersWindow />,
   wallpapers: <WallpapersWindow />,
+  messages: <MessagesWindow />,
 };
 
 export const WindowsLayer: React.FC = () => {

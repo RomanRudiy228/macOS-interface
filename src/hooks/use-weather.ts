@@ -31,6 +31,8 @@ export const useWeather = (apiKey: string) => {
       setError(null);
     } catch (error) {
       console.error("Error loading weather:", error);
+      setWeather(null);
+      setError("Unable to load weather data right now.");
     } finally {
       setLoading(false);
     }
