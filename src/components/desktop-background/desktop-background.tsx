@@ -14,5 +14,9 @@ export const DesktopBackground: React.FC<{ children: React.ReactNode }> = ({
     minHeight: "100vh",
   };
 
-  return <div className="min-h-screen" style={style}>{children}</div>;
+  return (
+    <div className="min-h-screen" style={style}>
+      {children}
+    </div>
+  );
 };

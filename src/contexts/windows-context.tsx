@@ -49,8 +49,7 @@ export const WindowsProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const isMinimized = useCallback(
-    (id: string) =>
-      openWindows.some((w) => w.id === id && w.isMinimized),
+    (id: string) => openWindows.some((w) => w.id === id && w.isMinimized),
     [openWindows]
   );
 

@@ -13,104 +13,171 @@ const STATIC_COLORS: SystemColor[] = [
   { id: "green", name: "Green", css: "bg-green-500" },
   { id: "yellow", name: "Yellow", css: "bg-yellow-400" },
 ];
-const DEFAULT_THEME = "dark";
-const DEFAULT_SYSTEM_COLOR = "blue";
 
 export const useSystemSettings = () => {
   const { setTheme, theme } = useTheme();
-  const supabase = createClient();
 
   const [activeColor, setActiveColor] = useState<string | null>(null);
+  const [settingsRowId, setSettingsRowId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchSettings = async () => {
+      const supabase = createClient();
       const {
         data: { user },
+        error: authError,
       } = await supabase.auth.getUser();
 
-      if (!user) {
+      if (authError || !user) {
         setIsLoading(false);
         return;
       }
 
       const { data, error } = await supabase
         .from("settings")
-        .select("theme, system_color")
+        .select("id, theme, system_color")
         .eq("user_id", user.id)
         .maybeSingle();
+      let row = data;
 
-      if (error) {
-        console.error("Settings fetch error:", error);
-        setIsLoading(false);
-        return;
-      }
-
-      if (!data) {
-        await supabase.from("settings").insert({
-          user_id: user.id,
-          wallpaper_id: null,
-          theme: DEFAULT_THEME,
-          system_color: DEFAULT_SYSTEM_COLOR,
-        });
-        if (DEFAULT_THEME !== theme) {
-          setTheme(DEFAULT_THEME);
-        }
-        setActiveColor(DEFAULT_SYSTEM_COLOR);
-        applySystemTheme(DEFAULT_SYSTEM_COLOR, STATIC_COLORS);
-        setIsLoading(false);
-        return;
-      }
-
-      const resolvedTheme = data.theme ?? DEFAULT_THEME;
-      const resolvedColor = data.system_color ?? DEFAULT_SYSTEM_COLOR;
-
-      if (resolvedTheme !== theme) {
-        setTheme(resolvedTheme);
-      }
-
-      setActiveColor(resolvedColor);
-      applySystemTheme(resolvedColor, STATIC_COLORS);
-
-      if (!data.theme || !data.system_color) {
-        await supabase
+      if (error || !row) {
+        const { data: inserted, error: insertError } = await supabase
           .from("settings")
-          .update({
-            theme: resolvedTheme,
-            system_color: resolvedColor,
+          .insert({
+            user_id: user.id,
+            theme: "dark",
+            system_color: "blue",
           })
-          .eq("user_id", user.id);
+          .select("id, theme, system_color")
+          .single();
+
+        if (insertError || !inserted) {
+          if (theme !== "dark") {
+            setTheme("dark");
+          }
+          setActiveColor("blue");
+          applySystemTheme("blue", STATIC_COLORS);
+          setIsLoading(false);
+          return;
+        }
+
+        row = inserted;
+      }
+
+      if (typeof row.id === "number") {
+        setSettingsRowId(row.id);
+      }
+
+      if (row.theme && row.theme !== theme) {
+        setTheme(row.theme);
+      }
+
+      if (row.system_color) {
+        setActiveColor(row.system_color);
+        applySystemTheme(row.system_color, STATIC_COLORS);
       }
 
       setIsLoading(false);
     };
 
     fetchSettings();
-  }, []);
+  }, [setTheme]);
 
   const toggleTheme = async (checked: boolean) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
     const newTheme = checked ? "dark" : "light";
     setTheme(newTheme);
-    await supabase.from("settings").update({ theme: newTheme }).eq("user_id", user.id);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) return;
+
+      let rowId = settingsRowId;
+      if (rowId == null) {
+        const { data: row } = await supabase
+          .from("settings")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (!row) {
+          const { data: inserted } = await supabase
+            .from("settings")
+            .insert({
+              user_id: user.id,
+              theme: newTheme,
+            })
+            .select("id")
+            .single();
+          const insertedId =
+            typeof inserted?.id === "number" ? inserted.id : null;
+          rowId = insertedId;
+          setSettingsRowId(insertedId);
+        } else {
+          const existingId = typeof row.id === "number" ? row.id : null;
+          rowId = existingId;
+          setSettingsRowId(existingId);
+        }
+      }
+
+      if (rowId != null) {
+        await supabase
+          .from("settings")
+          .update({ theme: newTheme })
+          .eq("id", rowId);
+      }
+    } catch {}
   };
 
   const changeColor = async (colorId: string) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
     setActiveColor(colorId);
     applySystemTheme(colorId, STATIC_COLORS);
-    await supabase
-      .from("settings")
-      .update({ system_color: colorId })
-      .eq("user_id", user.id);
+    try {
+      const supabase = createClient();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+      if (authError || !user) return;
+
+      let rowId = settingsRowId;
+      if (rowId == null) {
+        const { data: row } = await supabase
+          .from("settings")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (!row) {
+          const { data: inserted } = await supabase
+            .from("settings")
+            .insert({
+              user_id: user.id,
+              system_color: colorId,
+            })
+            .select("id")
+            .single();
+          const insertedId =
+            typeof inserted?.id === "number" ? inserted.id : null;
+          rowId = insertedId;
+          setSettingsRowId(insertedId);
+        } else {
+          const existingId = typeof row.id === "number" ? row.id : null;
+          rowId = existingId;
+          setSettingsRowId(existingId);
+        }
+      }
+
+      if (rowId != null) {
+        await supabase
+          .from("settings")
+          .update({ system_color: colorId })
+          .eq("id", rowId);
+      }
+    } catch {}
   };
 
   return {

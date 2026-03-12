@@ -21,9 +21,10 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
       .select("id, app_key, is_locked")
       .eq("app_key", appKey)
       .limit(1);
-    const { data: existing } = await (user
-      ? existingQuery.eq("user_id", user.id)
-      : existingQuery.is("user_id", null)
+    const { data: existing } = await (
+      user
+        ? existingQuery.eq("user_id", user.id)
+        : existingQuery.is("user_id", null)
     ).maybeSingle();
 
     if (existing) {
@@ -41,9 +42,8 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
       .select("id, position")
       .eq("app_key", "bin")
       .limit(1);
-    const { data: binItem } = await (user
-      ? binQuery.eq("user_id", user.id)
-      : binQuery.is("user_id", null)
+    const { data: binItem } = await (
+      user ? binQuery.eq("user_id", user.id) : binQuery.is("user_id", null)
     ).maybeSingle();
 
     let insertPosition = 1;
@@ -56,8 +56,7 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
         .order("position", { ascending: false });
       const { data: rowsToShift } = await (user
         ? rowsToShiftQuery.eq("user_id", user.id)
-        : rowsToShiftQuery.is("user_id", null)
-      );
+        : rowsToShiftQuery.is("user_id", null));
 
       for (const row of rowsToShift ?? []) {
         await supabase
@@ -73,9 +72,10 @@ export async function addToDock(appKey: string): Promise<DockItemView | null> {
         .select("position")
         .order("position", { ascending: false })
         .limit(1);
-      const { data: lastItem } = await (user
-        ? lastItemQuery.eq("user_id", user.id)
-        : lastItemQuery.is("user_id", null)
+      const { data: lastItem } = await (
+        user
+          ? lastItemQuery.eq("user_id", user.id)
+          : lastItemQuery.is("user_id", null)
       ).maybeSingle();
 
       insertPosition = (lastItem?.position ?? 0) + 1;

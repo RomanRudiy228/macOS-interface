@@ -10,6 +10,7 @@ import { WindowsLayer } from "@/components/windows-layer";
 import { DockMenuWrapper } from "@/components/dock-menu";
 import { TooltipProvider } from "@/components/tooltip";
 import { createClient } from "@/supabase/server";
+import WidgetsLayerServer from "@/components/widgets/widgets-layer/widgets-layer-server";
 
 export default async function DesktopPage() {
   const cookieStore = await cookies();
@@ -42,6 +43,7 @@ export default async function DesktopPage() {
               <DockMenuWrapper />
             </Suspense>
             <WindowsLayer />
+            <WidgetsLayerServer />
           </DesktopBackground>
         </WallpaperProvider>
       </WindowsProvider>

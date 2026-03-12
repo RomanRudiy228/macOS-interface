@@ -45,14 +45,16 @@ export const useRegisterSubmit = () => {
     }
 
     const userId = signInData.user.id;
-    const { error: profileUpsertError } = await supabase.from("profiles").upsert(
-      {
-        id: userId,
-        email: values.email,
-        username: displayUsername,
-      },
-      { onConflict: "id" }
-    );
+    const { error: profileUpsertError } = await supabase
+      .from("profiles")
+      .upsert(
+        {
+          id: userId,
+          email: values.email,
+          username: displayUsername,
+        },
+        { onConflict: "id" }
+      );
 
     if (profileUpsertError) {
       setSubmitInfo("Account created, but profile sync failed.");

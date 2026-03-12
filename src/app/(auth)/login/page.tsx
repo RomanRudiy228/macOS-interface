@@ -68,7 +68,9 @@ export default function LoginPage() {
             userInitial
           )}
         </div>
-        <p className="mt-4 text-sm font-medium text-white/95">{rememberedUsername}</p>
+        <p className="mt-4 text-sm font-medium text-white/95">
+          {rememberedUsername}
+        </p>
         <LoginForm />
         <p className="mt-2 text-xs text-white/80">
           New here?{" "}

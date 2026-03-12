@@ -4,7 +4,8 @@ import React from "react";
 import { useWallpaper } from "@/contexts";
 
 export const WallpapersWindow: React.FC = () => {
-  const { wallpapers, selectedWallpaper, setSelectedWallpaperId } = useWallpaper();
+  const { wallpapers, selectedWallpaper, setSelectedWallpaperId } =
+    useWallpaper();
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-4">
@@ -21,7 +22,9 @@ export const WallpapersWindow: React.FC = () => {
           <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             {selectedWallpaper?.name ?? "Wallpaper"}
           </p>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Wallpaper</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Wallpaper
+          </p>
         </div>
       </section>
 

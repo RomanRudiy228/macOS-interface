@@ -119,4 +119,3 @@ export const helpMenuItems: MenuItem[] = [
   { isDivider: true, label: "" },
   { label: "macOS Help" },
 ];
-

@@ -30,6 +30,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      conversations: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          last_message_content: string | null;
+          last_message_created_at: string | null;
+          last_message_sender_id: string | null;
+          last_seen_at: string | null;
+          participant_1_id: string;
+          participant_2_id: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          last_message_content?: string | null;
+          last_message_created_at?: string | null;
+          last_message_sender_id?: string | null;
+          last_seen_at?: string | null;
+          participant_1_id: string;
+          participant_2_id: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          last_message_content?: string | null;
+          last_message_created_at?: string | null;
+          last_message_sender_id?: string | null;
+          last_seen_at?: string | null;
+          participant_1_id?: string;
+          participant_2_id?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       dock_items: {
         Row: {
           app_key: string;
@@ -59,6 +95,44 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "apps";
             referencedColumns: ["app_key"];
+          },
+        ];
+      };
+      messages: {
+        Row: {
+          content: string;
+          conversation_id: string;
+          created_at: string | null;
+          id: string;
+          is_edited: boolean | null;
+          sender_id: string;
+          updated_at: string | null;
+        };
+        Insert: {
+          content: string;
+          conversation_id: string;
+          created_at?: string | null;
+          id?: string;
+          is_edited?: boolean | null;
+          sender_id: string;
+          updated_at?: string | null;
+        };
+        Update: {
+          content?: string;
+          conversation_id?: string;
+          created_at?: string | null;
+          id?: string;
+          is_edited?: boolean | null;
+          sender_id?: string;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey";
+            columns: ["conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "conversations";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -189,12 +263,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      widget_positions: {
+        Row: {
+          updated_at: string;
+          user_id: string;
+          widget_id: string;
+          x: number;
+          y: number;
+        };
+        Insert: {
+          updated_at?: string;
+          user_id: string;
+          widget_id: string;
+          x: number;
+          y: number;
+        };
+        Update: {
+          updated_at?: string;
+          user_id?: string;
+          widget_id?: string;
+          x?: number;
+          y?: number;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      mark_conversation_seen: {
+        Args: { conversation_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;
