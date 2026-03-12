@@ -33,8 +33,8 @@ export function WidgetsLayerClient({ positions }: { positions: PosRow[] }) {
     });
   };
 
-  const persist = (id: string, x: number, y: number) => {
-    upsertWidgetPosition(id, Math.round(x), Math.round(y));
+  const persist = async (id: string, x: number, y: number) => {
+    await upsertWidgetPosition(id, Math.round(x), Math.round(y));
   };
 
   return (
