@@ -60,7 +60,8 @@ export const MessagesWindow: React.FC = () => {
     (c) => c.id === selectedConversationId
   );
 
-  const formatTime = (dateString: string) => {
+  const formatTime = (dateString: string | null) => {
+    if (!dateString) return "";
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -93,6 +94,14 @@ export const MessagesWindow: React.FC = () => {
     ];
     const hash = username.charCodeAt(0) + username.charCodeAt(username.length - 1);
     return colors[hash % colors.length];
+  };
+
+  const formatMessageTime = (value: string | null) => {
+    if (!value) return "";
+    return new Date(value).toLocaleTimeString("uk-UA", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
   return (
     <div className="flex h-full bg-white dark:bg-slate-800">
@@ -325,10 +334,9 @@ export const MessagesWindow: React.FC = () => {
                               : "text-blue-100"
                           } mt-1`}
                         >
-                          {new Date(msg.created_at).toLocaleTimeString("uk-UA", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {formatMessageTime(
+                            msg.created_at as string | null
+                          )}
                         </p>
                       </div>
                     </div>
