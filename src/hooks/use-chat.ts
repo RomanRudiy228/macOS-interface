@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+"use client";
+
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getConversations,
   getOrCreateConversation,
@@ -15,8 +17,11 @@ import {
   type UserProfile,
 } from "@/actions/users-search";
 import { createClient } from "@/supabase/client";
+import { markConversationAsSeen } from "@/actions/mark-conversations-as-seen";
 
 export function useChat() {
+  const supabase = useMemo(() => createClient(), []);
+
   const [conversations, setConversations] = useState<ConversationWithUser[]>(
     []
   );
@@ -28,7 +33,6 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // User search state
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<UserProfile[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -38,6 +42,7 @@ export function useChat() {
     try {
       setIsLoading(true);
       setError(null);
+
       const data = await getConversations();
       setConversations(data);
     } catch (err) {
@@ -53,6 +58,7 @@ export function useChat() {
   const loadMessages = useCallback(async (conversationId: string) => {
     try {
       setError(null);
+
       const data = await getMessages(conversationId);
       setMessages(data);
     } catch (err) {
@@ -67,6 +73,7 @@ export function useChat() {
     try {
       setIsSearching(true);
       setError(null);
+
       if (query.trim()) {
         const results = await searchUsers(query);
         setSearchResults(results);
@@ -89,9 +96,13 @@ export function useChat() {
       try {
         setIsLoading(true);
         setError(null);
+
         const conversation = await getOrCreateConversation(userId);
+
         setSelectedConversationId(conversation.id);
+
         await loadConversations();
+
         setShowUserSearch(false);
         setSearchQuery("");
         setSearchResults([]);
@@ -111,6 +122,7 @@ export function useChat() {
     try {
       setShowUserSearch(true);
       setSearchQuery("");
+
       const results = await getAllUsers();
       setSearchResults(results);
     } catch (err) {
@@ -121,36 +133,35 @@ export function useChat() {
   }, []);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth
-      .getUser()
-      .then(({ data: { user } }) => {
-        if (user) {
-          setCurrentUserId(user.id);
-        }
-      })
-      .catch(() => {});
-  }, []);
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    });
+  }, [supabase]);
 
   useEffect(() => {
     loadConversations();
   }, [loadConversations]);
 
-  // Realtime subscription for conversations
   useEffect(() => {
-    const supabase = createClient();
+    if (!currentUserId) return;
+
     const channel = supabase
-      .channel("conversations")
+      .channel("messages-global")
       .on(
         "postgres_changes",
         {
-          event: "UPDATE",
+          event: "INSERT",
           schema: "public",
-          table: "conversations",
+          table: "messages",
         },
-        () => {
-          // Reload conversations when any conversation is updated
-          loadConversations();
+        async (payload) => {
+          const message = payload.new;
+
+          if (message.sender_id !== currentUserId) {
+            await loadConversations();
+          }
         }
       )
       .subscribe();
@@ -158,20 +169,23 @@ export function useChat() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [loadConversations]);
+  }, [supabase, currentUserId, loadConversations]);
 
-  // Load messages when conversation changes
-  useEffect(() => {
-    if (selectedConversationId) {
-      loadMessages(selectedConversationId);
-    }
-  }, [selectedConversationId]);
-
-  // Realtime subscription for messages
   useEffect(() => {
     if (!selectedConversationId) return;
 
-    const supabase = createClient();
+    const initConversation = async () => {
+      await loadMessages(selectedConversationId);
+      await markConversationAsSeen(selectedConversationId);
+      await loadConversations();
+    };
+
+    initConversation();
+  }, [selectedConversationId, loadMessages, loadConversations]);
+
+  useEffect(() => {
+    if (!selectedConversationId) return;
+
     const channel = supabase
       .channel(`messages:${selectedConversationId}`)
       .on(
@@ -183,7 +197,6 @@ export function useChat() {
           filter: `conversation_id=eq.${selectedConversationId}`,
         },
         async (payload) => {
-          // Fetch the new message with profile
           const { data: message, error } = await supabase
             .from("messages")
             .select("*")
@@ -191,20 +204,15 @@ export function useChat() {
             .single();
 
           if (error) {
-            console.error("Error fetching new message:", error);
+            console.error("Error fetching message:", error);
             return;
           }
 
-          // Get sender profile
-          const { data: profile, error: profileError } = await supabase
+          const { data: profile } = await supabase
             .from("profiles")
             .select("username, avatar_url")
             .eq("id", message.sender_id)
             .single();
-
-          if (profileError) {
-            console.error("Error fetching profile:", profileError);
-          }
 
           const messageWithProfile: MessageWithProfile = {
             ...message,
@@ -214,10 +222,12 @@ export function useChat() {
             },
           };
 
-          // Add new message to state
-          setMessages((prev) => [...prev, messageWithProfile]);
+          setMessages((prev) => {
+            const exists = prev.some((m) => m.id === messageWithProfile.id);
+            if (exists) return prev;
+            return [...prev, messageWithProfile];
+          });
 
-          // Reload conversations to update last message
           loadConversations();
         }
       )
@@ -226,19 +236,18 @@ export function useChat() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [selectedConversationId]);
+  }, [selectedConversationId, supabase, loadConversations]);
 
-  // Search users as user types
   useEffect(() => {
-    const searchTimer = setTimeout(async () => {
+    const timer = setTimeout(() => {
       if (searchQuery.trim()) {
-        await handleUserSearch(searchQuery);
+        handleUserSearch(searchQuery);
       } else {
         setSearchResults([]);
       }
     }, 300);
 
-    return () => clearTimeout(searchTimer);
+    return () => clearTimeout(timer);
   }, [searchQuery, handleUserSearch]);
 
   const handleSendMessage = async (content: string) => {
@@ -246,13 +255,7 @@ export function useChat() {
 
     try {
       setError(null);
-      const newMessage = await sendMessage(selectedConversationId, content);
-      if (newMessage) {
-        // Add the new message to state immediately
-        setMessages((prev) => [...prev, newMessage]);
-        // Reload conversations to update "last message"
-        await loadConversations();
-      }
+      await sendMessage(selectedConversationId, content);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to send message";
@@ -268,16 +271,19 @@ export function useChat() {
     isLoading,
     error,
     currentUserId,
+
     setSelectedConversationId,
     handleSendMessage,
     startConversation,
+
     loadConversations,
     loadMessages,
-    // User search
+
     searchQuery,
     setSearchQuery,
     searchResults,
     isSearching,
+
     showUserSearch,
     setShowUserSearch,
     openUserSearch,

@@ -14,6 +14,9 @@ export interface ConversationWithUser extends Conversation {
     avatar_url: string | null;
   };
   lastMessageContent: string | null;
+  lastMessageSenderId?: string | null;
+  lastMessageCreatedAt?: string | null;
+  lastSeenAt?: string | number | null;
 }
 
 export async function getConversations(): Promise<ConversationWithUser[]> {

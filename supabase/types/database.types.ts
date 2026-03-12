@@ -34,6 +34,10 @@ export type Database = {
         Row: {
           created_at: string | null;
           id: string;
+          last_message_content: string | null;
+          last_message_created_at: string | null;
+          last_message_sender_id: string | null;
+          last_seen_at: string | null;
           participant_1_id: string;
           participant_2_id: string;
           updated_at: string | null;
@@ -41,6 +45,10 @@ export type Database = {
         Insert: {
           created_at?: string | null;
           id?: string;
+          last_message_content?: string | null;
+          last_message_created_at?: string | null;
+          last_message_sender_id?: string | null;
+          last_seen_at?: string | null;
           participant_1_id: string;
           participant_2_id: string;
           updated_at?: string | null;
@@ -48,6 +56,10 @@ export type Database = {
         Update: {
           created_at?: string | null;
           id?: string;
+          last_message_content?: string | null;
+          last_message_created_at?: string | null;
+          last_message_sender_id?: string | null;
+          last_seen_at?: string | null;
           participant_1_id?: string;
           participant_2_id?: string;
           updated_at?: string | null;
@@ -280,7 +292,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      mark_conversation_seen: {
+        Args: { conversation_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;

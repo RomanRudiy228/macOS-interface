@@ -10,6 +10,10 @@ export interface ConversationWithUser extends Conversation {
     email: string;
     avatar_url: string | null;
   };
+  lastMessageContent?: string | null;
+  lastMessageSenderId?: string | null;
+  lastMessageCreatedAt?: string | null;
+  lastSeenAt?: string | number | null;
 }
 
 export interface MessageWithProfile extends Message {

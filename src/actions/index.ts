@@ -10,3 +10,4 @@ export * from "./profile-get-by-email";
 export * from "./conversations-get";
 export * from "./messages-get";
 export * from "./users-search";
+export * from "./mark-conversations-as-seen";

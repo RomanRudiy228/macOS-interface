@@ -12,11 +12,9 @@ export const MessagesWindow: React.FC = () => {
     error,
     setSelectedConversationId,
     handleSendMessage,
-    // User search
     searchQuery,
     setSearchQuery,
     searchResults,
-    isSearching,
     showUserSearch,
     setShowUserSearch,
     openUserSearch,
@@ -28,14 +26,20 @@ export const MessagesWindow: React.FC = () => {
   const [conversationSearchQuery, setConversationSearchQuery] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    const unreadCount = messages.filter(
+      (m) => m.sender_id !== currentUserId
+    ).length;
+    document.title =
+      unreadCount > 0 ? `(${unreadCount}) My Chat App` : "My Chat App";
+  }, [messages, currentUserId]);
+
   const handleSendClick = async () => {
     if (!messageInput.trim()) return;
-
     try {
       await handleSendMessage(messageInput);
       setMessageInput("");
@@ -69,7 +73,6 @@ export const MessagesWindow: React.FC = () => {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-
     if (diffMins < 1) return "now";
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
@@ -79,10 +82,8 @@ export const MessagesWindow: React.FC = () => {
     return date.toLocaleDateString("uk-UA");
   };
 
-  const getAvatarInitial = (username: string) => {
-    return username.charAt(0).toUpperCase();
-  };
-
+  const getAvatarInitial = (username: string) =>
+    username.charAt(0).toUpperCase();
   const getAvatarColor = (username: string) => {
     const colors = [
       "bg-red-500",
@@ -106,6 +107,7 @@ export const MessagesWindow: React.FC = () => {
       minute: "2-digit",
     });
   };
+
   return (
     <div className="flex h-full bg-white dark:bg-slate-800">
       {/* Sidebar - Conversations List */}
@@ -136,57 +138,27 @@ export const MessagesWindow: React.FC = () => {
           </button>
         </div>
 
-        {/* Search conversations or users */}
+        {/* Search */}
         {!showUserSearch ? (
           <div className="p-3 border-b border-gray-200 dark:border-slate-600">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search conversations"
-                value={conversationSearchQuery}
-                onChange={(e) => setConversationSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
-              />
-              <svg
-                className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
+            <input
+              type="text"
+              placeholder="Search conversations"
+              value={conversationSearchQuery}
+              onChange={(e) => setConversationSearchQuery(e.target.value)}
+              className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
+            />
           </div>
         ) : (
           <div className="p-3 border-b border-gray-200 dark:border-slate-600">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                autoFocus
-                className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
-              />
-              <svg
-                className="absolute left-2.5 top-2.5 w-4 h-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-            </div>
+            <input
+              type="text"
+              placeholder="Search users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              autoFocus
+              className="w-full pl-8 pr-4 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-slate-100"
+            />
             <button
               onClick={() => setShowUserSearch(false)}
               className="mt-2 w-full px-3 py-1 text-sm text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded transition-colors"
@@ -196,125 +168,77 @@ export const MessagesWindow: React.FC = () => {
           </div>
         )}
 
-        {/* Conversations or Users List */}
+        {/* Conversations list */}
         <div className="flex-1 overflow-y-auto">
-          {showUserSearch ? (
-            // User search results
-            <>
-              {isSearching ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500 dark:text-slate-400">
-                    Searching...
-                  </p>
-                </div>
-              ) : searchResults.length === 0 ? (
-                <div className="flex items-center justify-center h-full p-4">
-                  <p className="text-center text-gray-500 dark:text-slate-400">
-                    {searchQuery ? "No users found" : "No available users"}
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-200 dark:divide-slate-600">
-                  {searchResults.map((user) => (
-                    <button
-                      key={user.id}
-                      onClick={() => startConversation(user.id)}
-                      disabled={isLoading}
-                      className={`w-full flex items-center p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
-                        isLoading ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                    >
-                      <div
-                        className={`w-10 h-10 ${getAvatarColor(
-                          user.username
-                        )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
-                      >
-                        {getAvatarInitial(user.username)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm">
-                          {user.username}
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-slate-400 truncate">
-                          {user.email}
-                        </p>
-                      </div>
-                      <svg
-                        className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            // Conversations list
-            <>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full">
-                  <p className="text-gray-500 dark:text-slate-400">
-                    Loading...
-                  </p>
-                </div>
-              ) : filteredConversations.length === 0 ? (
-                <div className="flex items-center justify-center h-full p-4">
-                  <p className="text-center text-gray-500 dark:text-slate-400">
-                    No conversations yet. Click + to start a new chat!
-                  </p>
-                </div>
-              ) : (
-                <div className="divide-y divide-gray-200 dark:divide-slate-600">
-                  {filteredConversations.map((conv) => {
-                    const lastMessage =
-                      conv.lastMessageContent ?? "No messages yet";
+          {showUserSearch
+            ? searchResults.map((user) => (
+                <button
+                  key={user.id}
+                  onClick={() => startConversation(user.id)}
+                  disabled={isLoading}
+                  className={`w-full flex items-center p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-slate-700 ${
+                    isLoading ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  <div
+                    className={`w-10 h-10 ${getAvatarColor(user.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
+                  >
+                    {getAvatarInitial(user.username)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm">
+                      {user.username}
+                    </h3>
+                    <p className="text-xs text-gray-600 dark:text-slate-400 truncate">
+                      {user.email}
+                    </p>
+                  </div>
+                </button>
+              ))
+            : filteredConversations.map((conv) => {
+                const lastMessage =
+                  conv.lastMessageContent ?? "No messages yet";
+                const hasNew =
+                  conv.lastMessageSenderId !== currentUserId &&
+                  conv.lastMessageCreatedAt &&
+                  (!conv.lastSeenAt ||
+                    new Date(conv.lastMessageCreatedAt) >
+                      new Date(conv.lastSeenAt));
 
-                    return (
-                      <button
-                        key={conv.id}
-                        onClick={() => setSelectedConversationId(conv.id)}
-                        className={`w-full flex items-center p-3 text-left transition-colors ${
-                          selectedConversationId === conv.id
-                            ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
-                            : "hover:bg-gray-50 dark:hover:bg-slate-700"
-                        }`}
-                      >
-                        <div
-                          className={`w-10 h-10 ${getAvatarColor(
-                            conv.otherUserProfile.username
-                          )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3 flex-shrink-0`}
-                        >
-                          {getAvatarInitial(conv.otherUserProfile.username)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-center mb-1">
-                            <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
-                              {conv.otherUserProfile.username}
-                            </h3>
-                            <span className="text-xs text-gray-500 dark:text-slate-400 ml-2 flex-shrink-0">
-                              {formatTime(conv.updated_at)}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
-                            {lastMessage}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </>
-          )}
+                return (
+                  <button
+                    key={conv.id}
+                    onClick={() => setSelectedConversationId(conv.id)}
+                    className={`w-full flex items-center p-3 text-left transition-colors ${
+                      selectedConversationId === conv.id
+                        ? "bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500"
+                        : "hover:bg-gray-50 dark:hover:bg-slate-700"
+                    }`}
+                  >
+                    <div
+                      className={`w-10 h-10 ${getAvatarColor(conv.otherUserProfile.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
+                    >
+                      {getAvatarInitial(conv.otherUserProfile.username)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className="font-semibold text-gray-900 dark:text-slate-100 text-sm truncate">
+                          {conv.otherUserProfile.username}
+                        </h3>
+                        <span className="text-xs text-gray-500 dark:text-slate-400 ml-2 flex-shrink-0">
+                          {formatTime(conv.updated_at)}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-600 dark:text-slate-300 truncate">
+                        {lastMessage}
+                      </p>
+                    </div>
+                    {hasNew && (
+                      <span className="ml-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                    )}
+                  </button>
+                );
+              })}
         </div>
       </div>
 
@@ -326,9 +250,7 @@ export const MessagesWindow: React.FC = () => {
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-600">
               <div className="flex items-center">
                 <div
-                  className={`w-8 h-8 ${getAvatarColor(
-                    selectedConversation.otherUserProfile.username
-                  )} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
+                  className={`w-8 h-8 ${getAvatarColor(selectedConversation.otherUserProfile.username)} rounded-full flex items-center justify-center text-white font-semibold text-sm mr-3`}
                 >
                   {getAvatarInitial(
                     selectedConversation.otherUserProfile.username
@@ -361,9 +283,7 @@ export const MessagesWindow: React.FC = () => {
                   return (
                     <div
                       key={msg.id}
-                      className={`flex ${
-                        isOwnMessage ? "justify-end" : "justify-start"
-                      }`}
+                      className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
                     >
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
@@ -374,11 +294,7 @@ export const MessagesWindow: React.FC = () => {
                       >
                         <p className="break-words">{msg.content}</p>
                         <p
-                          className={`text-xs ${
-                            isOwnMessage
-                              ? "text-blue-100"
-                              : "text-gray-500 dark:text-slate-400"
-                          } mt-1`}
+                          className={`text-xs ${isOwnMessage ? "text-blue-100" : "text-gray-500 dark:text-slate-400"} mt-1`}
                         >
                           {formatMessageTime(msg.created_at as string | null)}
                         </p>
